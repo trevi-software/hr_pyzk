@@ -127,7 +127,7 @@
             to import users here Or create users manually here and export them to the device</field>
         </record>
 
-        <menuitem id="root_menu" name=" Device Attendance" sequence="10" />
+        <menuitem id="root_menu" name="Device Attendance" sequence="10" web_icon="hr_pyzk,static/description/icon.png"/>
         <menuitem
     id="attendance_sub_menu"
     name="Attendance"
