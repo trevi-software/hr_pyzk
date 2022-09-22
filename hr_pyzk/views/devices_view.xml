@@ -27,7 +27,7 @@
                         <field name="device_password"  password="True" />
                         <field name="sequence"/>
                         <field name="state" required = "True"/>
-                        <field name="difference" required = "True"/>
+                        <field name="tz"/>
                     </group>
                     <footer>
                         <button class="oe_highlight" name="test_connection" string="Test connection" type="object"/>

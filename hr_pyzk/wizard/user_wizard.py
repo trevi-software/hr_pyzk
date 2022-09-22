@@ -4,9 +4,10 @@
 ##############################################################################
 
 #from datetime import datetime
+from operator import is_
 from odoo import models, fields, api, exceptions, _
 import datetime
-import pytz
+from pytz import timezone, utc
 from ..controllers import controller as c
 
 
@@ -40,24 +41,19 @@ class UserWizard(models.TransientModel):
         attendance_object = self.env['device.attendances']
         devices_object = self.env['devices']
         devices = devices_object.search([('state', '=', 0)])
-        # user_tz = self.env.user.tz
-        # local = pytz.timezone(user_tz)
-        # local_time = datetime.datetime.now()
-        # difference = (pytz.timezone('UTC').localize(local_time) - local.localize(local_time))
         for device in devices:
+            device_tz = timezone(device.tz)
             attendances = c.DeviceUsers.get_attendance(device)
             latest_rec = attendance_object.search([('device_id', '=', device.id)], limit=1)
             if latest_rec:
-                latest_datetime = str(latest_rec.device_datetime)
-                latest_datetime = datetime.datetime.strptime(latest_datetime, '%Y-%m-%d %H:%M:%S')
-                latest_datetime = latest_datetime + datetime.timedelta(hours=device.difference)
+                latest_datetime = utc.localize(latest_rec.device_datetime, is_dst=False).astimezone(device_tz).replace(tzinfo=None)
 
-                all_attendances = [[y.id, x[1].astimezone(pytz.utc), x[2], x[3]]
+                all_attendances = [[y.id, x[1], x[2], x[3]]
                                    for x in attendances for y in device_users if
                                    int(x[0]) == y.device_user_id and x[2] <= 1 and x[1] > latest_datetime]
             else:
 
-                all_attendances = [[y.id, x[1].astimezone(pytz.utc), x[2], x[3]]
+                all_attendances = [[y.id, x[1], x[2], x[3]]
                                    for x in attendances for y in device_users if
                                    int(x[0]) == y.device_user_id and x[2] <= 1]
             all_clocks.extend((all_attendances))
@@ -65,7 +61,7 @@ class UserWizard(models.TransientModel):
         for a in all_clocks:
             attendance_object.create({
                 'device_user_id': int(a[0]),
-                'device_datetime': a[1]+ datetime.timedelta(hours=device.difference),
+                'device_datetime': device_tz.localize(a[1], is_dst=False).astimezone(utc).replace(tzinfo=None),
                 'device_punch': str(a[2]),
                 #'repeat': a[4],
                 'attendance_state': 0,
