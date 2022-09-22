@@ -1,7 +1,7 @@
 
 from odoo import models, fields, api, exceptions, _
 from addons.hr_pyzk.controllers import controller as c
-from zk import ZK, const
+from pyzk import ZK, const
 
 class DeviceUsers(models.Model):
     _name = 'device.users'

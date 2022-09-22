@@ -3,11 +3,9 @@
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
 
-#from .pyzk_data import PyzkData
-from zk import ZK, const
 from odoo import api, fields, models, exceptions, _
 from addons.hr_pyzk.controllers import controller as c
-from zk import ZK, const
+from pyzk import ZK, const
 
 class DeleteAttendanceWizard(models.TransientModel):
     _name = 'delete.attendance.wizard'
