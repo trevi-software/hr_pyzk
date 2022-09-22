@@ -68,7 +68,7 @@ class ConnectToDevice(object):
 
 
         try:
-            zk = ZK(ip_address, port,timeout = 10, password=device_password)
+            zk = ZK(ip_address, port,timeout = 10, password=device_password, ommit_ping=True)
             conn = zk.connect()
 
         except Exception as e:
