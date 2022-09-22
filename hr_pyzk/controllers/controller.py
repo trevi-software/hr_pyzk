@@ -1,16 +1,17 @@
-from zk import ZK, const
-from odoo import models, fields, api, exceptions, _
-
-class DeviceUsers():
+from odoo import exceptions
+from zk import ZK
 
 
+class DeviceUsers:
     def get_users(devices):
         all_users = []
         all_users.clear()
         # device_object = self.env['devices']
         # devices = device_object.search([('state', '=', 0)])
         for device in devices:
-            with ConnectToDevice(device.ip_address, device.port, device.device_password) as conn:
+            with ConnectToDevice(
+                device.ip_address, device.port, device.device_password
+            ) as conn:
                 users = conn.get_users()
                 all_users.extend(users)
                 added = []
@@ -26,16 +27,20 @@ class DeviceUsers():
 
     def get_attendance(device):
         """
-                Function uses to get attendances
-                """
+        Function uses to get attendances
+        """
 
-        with ConnectToDevice(device.ip_address, device.port, device.device_password) as conn:
+        with ConnectToDevice(
+            device.ip_address, device.port, device.device_password
+        ) as conn:
             attendances = conn.get_attendance()
-            device_attendance = [[x.user_id, x.timestamp, x.punch, device.id] for x in attendances]
+            device_attendance = [
+                [x.user_id, x.timestamp, x.punch, device.id] for x in attendances
+            ]
 
         return device_attendance
 
-    def outputresult(user_punches):
+    def outputresult(self):
 
         user_clock = []
         user_clock.clear()
@@ -43,20 +48,23 @@ class DeviceUsers():
         user_attendance.clear()
         initial_number = 1
 
-        for clock in user_punches:
+        for clock in self:
             if clock[2] == initial_number:
                 initial_number = clock[2]
-                pass
             else:
                 user_clock.append(clock)
                 initial_number = clock[2]
 
         if len(user_clock) != 0 and user_clock[-1][2] == 0:
-            del (user_clock[-1])
+            del user_clock[-1]
 
-        user_attendance = [[i[0], i[1], j[1]] for i, j in zip(user_clock[::2], user_clock[1::2])]
+        user_attendance = [
+            [i[0], i[1], j[1]] for i, j in zip(user_clock[::2], user_clock[1::2])
+        ]
 
         return user_attendance
+
+
 class ConnectToDevice(object):
     """
     Class uses to assure connetion to a device and closing of the same
@@ -65,10 +73,14 @@ class ConnectToDevice(object):
 
     def __init__(self, ip_address, port, device_password):
 
-
-
         try:
-            zk = ZK(ip_address, port,timeout = 10, password=device_password, ommit_ping=True)
+            zk = ZK(
+                ip_address,
+                port,
+                timeout=10,
+                password=device_password,
+                ommit_ping=True
+            )
             conn = zk.connect()
 
         except Exception as e:

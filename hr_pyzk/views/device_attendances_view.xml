@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
         <record id="device_attendances_tree_view" model="ir.ui.view">
@@ -6,12 +6,12 @@
             <field name="model">device.attendances</field>
             <field name="arch" type="xml">
                 <tree string="Device Attendances">
-                    <field name="device_user_id"/>
-                    <field name="employee_id"/>
-                    <field name="device_datetime"/>
-                    <field name="device_punch"/>
-                    <field name="attendance_state"/>
-                    <field name="device_id"/>
+                    <field name="device_user_id" />
+                    <field name="employee_id" />
+                    <field name="device_datetime" />
+                    <field name="device_punch" />
+                    <field name="attendance_state" />
+                    <field name="device_id" />
                 </tree>
             </field>
         </record>
@@ -23,12 +23,12 @@
                 <form string="Device Attendances">
                     <sheet>
                         <group>
-                            <field name="device_user_id"/>
-                            <field name="employee_id"/>
-                            <field name="device_datetime"/>
-                            <field name="device_punch"/>
-                            <field name="attendance_state"/>
-                            <field name="device_id"/>
+                            <field name="device_user_id" />
+                            <field name="employee_id" />
+                            <field name="device_datetime" />
+                            <field name="device_punch" />
+                            <field name="attendance_state" />
+                            <field name="device_id" />
                         </group>
                     </sheet>
                 </form>
@@ -40,12 +40,12 @@
             <field name="model">device.attendances</field>
             <field name="arch" type="xml">
                 <search string="Device Attendance">
-                    <field name="device_user_id"/>
-                    <field name="employee_id"/>
-                    <field name="device_datetime"/>
-                    <field name="device_punch"/>
-                    <field name="attendance_state"/>
-                    <field name="device_id"/>
+                    <field name="device_user_id" />
+                    <field name="employee_id" />
+                    <field name="device_datetime" />
+                    <field name="device_punch" />
+                    <field name="attendance_state" />
+                    <field name="device_id" />
                 </search>
             </field>
         </record>
@@ -60,13 +60,20 @@
             <field name="res_model">device.attendances</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create">Get Data from Fingerprint Device
+                <p
+        class="oe_view_nocontent_create"
+      >Get Data from Fingerprint Device
                 </p>
             </field>
         </record>
 
-        <menuitem id="attendance_menu_item"  name="Attendances"
-                  action="device_attendances_action" parent="attendance_sub_menu" sequence="1"/>
+        <menuitem
+    id="attendance_menu_item"
+    name="Attendances"
+    action="device_attendances_action"
+    parent="attendance_sub_menu"
+    sequence="1"
+  />
 
 
 </odoo>
