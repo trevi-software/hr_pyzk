@@ -3,21 +3,19 @@
 
 
 {
-    'name': 'PYZK Attendances',
-    'version': '1.0.0.0',
+    'name': 'ZKTeco Biometric Attendance',
+    'version': '14.0.1.0.0',
     'category': 'Human Resources',
-    'sequence': 100,
-    'summary': 'Employee Attendance using pyzk ',
-    'description': """
-This Module fetches attendance from zk machines and add them in the attendance
-==============================================================================
-
-It works on zkteco machines using pyzk library( version 1.9)
-       """,
+    'summary': 'Employee Attendance using ZKTeco Time & Attendance devices.',
     'website': 'https://github.com/smsalah/hr_pyzk',
-	'author': 'Sheikh M. Salahuddin <smsalah@gmail.com>',
-    'license': 'AGPL-3',
+	'author': 'Sheikh M. Salahuddin, TREVI Software',
+    'license': 'GPL-3',
+    "images": ["static/src/img/main_screenshot.png"],
+    "website": "https://github.com/trevi-software/trevi-hr",
     'depends': ['hr', 'hr_attendance'],
+    'external_dependencies': {
+        'python': ['pyzk'],
+    },
     'data': [
         'views/device_users_view.xml',
         'views/devices_view.xml',
@@ -29,6 +27,4 @@ It works on zkteco machines using pyzk library( version 1.9)
         'security/ir.model.access.csv',
      ],
     'installable': True,
-    'auto_install': False,
-    'application': True,
 }
