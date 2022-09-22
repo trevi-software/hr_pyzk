@@ -4,8 +4,8 @@
 ##############################################################################
 
 from odoo import api, fields, models, exceptions, _
-from addons.hr_pyzk.controllers import controller as c
-from pyzk import ZK, const
+from ..controllers import controller as c
+from zk import ZK, const
 
 class DeleteAttendanceWizard(models.TransientModel):
     _name = 'delete.attendance.wizard'

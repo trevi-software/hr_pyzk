@@ -7,7 +7,7 @@
 from odoo import models, fields, api, exceptions, _
 import datetime
 import pytz
-from addons.hr_pyzk.controllers import controller as c
+from ..controllers import controller as c
 
 
 class UserWizard(models.TransientModel):
@@ -66,7 +66,7 @@ class UserWizard(models.TransientModel):
             attendance_object.create({
                 'device_user_id': int(a[0]),
                 'device_datetime': a[1]+ datetime.timedelta(hours=device.difference),
-                'device_punch': a[2],
+                'device_punch': str(a[2]),
                 #'repeat': a[4],
                 'attendance_state': 0,
                 'device_id': a[3],
@@ -109,7 +109,6 @@ class UserWizard(models.TransientModel):
                         record.attendance_state = 1
         return all_attendance
 
-    @api.multi
     def combine_attendance(self):
         combined_attendances_object= self.env['combined.attendances']
         valid_attendances = []

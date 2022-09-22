@@ -1,7 +1,7 @@
+from zk import ZK, const
 
 from odoo import models, fields, api, exceptions, _
-from addons.hr_pyzk.controllers import controller as c
-from pyzk import ZK, const
+from ..controllers import controller as c
 
 class DeviceUsers(models.Model):
     _name = 'device.users'
@@ -26,8 +26,7 @@ class DeviceUsers(models.Model):
          'with the same device_user_id'),
     ]
 
-    @api.multi
-    def create_user(self, device):
+    def create_user(self):
         """
                 Function uses to get attendances
                 """
@@ -62,8 +61,7 @@ class DeviceUsers(models.Model):
                     "context": {'show_message2': True},
                 }
 
-    @api.multi
-    def edit_user(self, device):
+    def edit_user(self):
         """
                 Function uses to get attendances
                 """
