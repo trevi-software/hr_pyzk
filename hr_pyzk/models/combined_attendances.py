@@ -37,7 +37,7 @@ class CombinedAttendances(models.Model):
     device_clockout = fields.Datetime(string="Clock Out")
     state = fields.Selection(
         selection=[
-            ("not_ransferred", "Not Transferred"),
+            ("not_transferred", "Not Transferred"),
             ("invalid", "Invalid"),
             ("transferred", "Transferred"),
         ],

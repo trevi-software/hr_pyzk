@@ -82,7 +82,7 @@ class UserWizard(models.TransientModel):
                     .replace(tzinfo=None),
                     "device_punch": str(a[2]),
                     # 'repeat': a[4],
-                    "attendance_state": 0,
+                    "attendance_state": "0",
                     "device_id": a[3],
                 }
             )
@@ -109,7 +109,7 @@ class UserWizard(models.TransientModel):
             device_attendances = device_attendances_object.search(
                 [
                     ("device_user_id", "=", user.id),
-                    ("attendance_state", "=", 0)
+                    ("attendance_state", "=", "0")
                 ]
             )
 
@@ -117,9 +117,7 @@ class UserWizard(models.TransientModel):
                 user_punches = [
                     [
                         int(x.device_user_id),
-                        datetime.datetime.strptime(
-                            str(x.device_datetime), "%Y-%m-%d %H:%M:%S"
-                        ),
+                        x.device_datetime,
                         x.device_punch,
                     ]
                     for x in device_attendances
@@ -131,8 +129,8 @@ class UserWizard(models.TransientModel):
                 # user_clocks.extend(clock)
 
                 for record in device_attendances:
-                    if record.attendance_state == 0:
-                        record.attendance_state = 1
+                    if record.attendance_state == "0":
+                        record.attendance_state = "1"
         return all_attendance
 
     def combine_attendance(self):
@@ -154,11 +152,10 @@ class UserWizard(models.TransientModel):
         combined_attendance_object = self.env["combined.attendances"]
         hr_attendance_object = self.env["hr.attendance"]
         all_data = combined_attendance_object.search(
-            [("state", "=", "Not Transferred"), ("employee_id", "!=", False)]
+            [("state", "=", "not_transferred"), ("employee_id", "!=", False)]
         )
 
         for attendance in all_data:
-            # if attendance.employee_id:
             hr_attendance_object.create(
                 {
                     "employee_id": attendance.employee_id.id,
@@ -167,4 +164,4 @@ class UserWizard(models.TransientModel):
                 }
             )
 
-            attendance.state = "Transferred"
+            attendance.state = "transferred"
