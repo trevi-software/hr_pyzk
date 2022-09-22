@@ -58,7 +58,6 @@
         <record id="device_attendances_action" model="ir.actions.act_window">
             <field name="name">Attendances</field>
             <field name="res_model">device.attendances</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">Get Data from Fingerprint Device

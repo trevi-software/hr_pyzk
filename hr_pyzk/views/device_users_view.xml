@@ -30,22 +30,22 @@
 
                     </footer>
 
-                    <div class="alert alert-success alert-dismissible" invisible="not context.get('show_message1', False)">
+                    <div class="alert alert-success alert-dismissible" role="alert" invisible="not context.get('show_message1', False)">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>
                         <strong>Success!</strong> Fingerprint User has been created successfully.
                     </div>
 
-                    <div class="alert alert-danger alert-dismissible" invisible="not context.get('show_message2', False)">
+                    <div class="alert alert-danger alert-dismissible" role="alert" invisible="not context.get('show_message2', False)">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>
                         <strong>Warning!</strong> pyzk_id has already been taken. Please choose a new pyzk_id .
                     </div>
 
-                    <div class="alert alert-success alert-dismissible" invisible="not context.get('show_message3', False)">
+                    <div class="alert alert-success alert-dismissible" role="alert" invisible="not context.get('show_message3', False)">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>
                         <strong>Success!</strong> Existing User has been updated successfully .
                     </div>
 
-                    <div class="alert alert-danger alert-dismissible" invisible="not context.get('show_message4', False)">
+                    <div class="alert alert-danger alert-dismissible" role="alert" invisible="not context.get('show_message4', False)">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>
                         <strong>Warning!</strong> User does not exist in the fingerprint device. Please create the user first.
                     </div>
@@ -70,7 +70,6 @@
         <record id="device_users_action" model="ir.actions.act_window">
             <field name="name">Device Users</field>
             <field name="res_model">device.users</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help">The view shows Device users. Please use "Import User from Device"
             to import users here Or create users manually here and export them to the device</field>

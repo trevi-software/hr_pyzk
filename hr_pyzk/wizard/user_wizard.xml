@@ -29,7 +29,6 @@
           <field name="name">Import users and Attendances from Fingerprint Devices, Combine them and Transfer to HR Attendances</field>
           <field name="type">ir.actions.act_window</field>
           <field name="res_model">user.wizard</field>
-          <field name="view_type">form</field>
           <field name="view_mode">form</field>
           <field name="target">new</field>
           <field name="view_id" ref="import_device_users_wizard"/>

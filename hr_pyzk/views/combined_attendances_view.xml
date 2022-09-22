@@ -55,7 +55,6 @@
         <record id="combined_attendances_action" model="ir.actions.act_window">
             <field name="name">Combined Attendances</field>
             <field name="res_model">combined.attendances</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="combined_attendances_tree_view"/>
             <field name="help" type="html">

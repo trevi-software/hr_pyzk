@@ -33,7 +33,7 @@
                         <button class="oe_highlight" name="test_connection" string="Test connection" type="object"/>
                     </footer>
 
-                    <div class="alert alert-success alert-dismissible" invisible="not context.get('show_message1',
+                    <div class="alert alert-success alert-dismissible" role="alert" invisible="not context.get('show_message1',
                     False)">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">X</a>
                         <strong>Success!</strong> Device Connected Successfully
@@ -46,7 +46,6 @@
         <record id="devices_actions" model="ir.actions.act_window">
             <field name="name"> Fingerprint Devices</field>
             <field name="res_model">devices</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help">This view shows fingerprint devices</field>
         </record>
