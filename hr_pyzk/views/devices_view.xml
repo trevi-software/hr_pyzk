@@ -2,78 +2,86 @@
         <!--Views -->
 
         <record id="devices_tree_view" model="ir.ui.view">
-            <field name="name">devices_tree_view</field>
-            <field name="model">devices</field>
+            <field name="name">Attendance Clock List View</field>
+            <field name="model">hr.attendance.clock</field>
             <field name="arch" type="xml">
                 <tree string="Devices">
                     <field name="name" />
                     <field name="ip_address" />
                     <field name="port" />
                     <field name="sequence" />
-                    <field name="state" />
+                    <field name="active" widget="boolean_toggle" />
+                    <field name="device_name" />
+                    <field name="device_serial" />
+                    <field name="device_platform" />
+                    <field name="device_firmware" />
+                    <field name="device_fp_version" />
+                    <field name="device_mac" />
                 </tree>
             </field>
         </record>
 
         <record id="devices_form_view" model="ir.ui.view">
-            <field name="name">devices_form_view</field>
-            <field name="model">devices</field>
+            <field name="name">Attendance Clock Form View</field>
+            <field name="model">hr.attendance.clock</field>
             <field name="arch" type="xml">
-                <form string="Devices">
-                    <group>
-                        <field name="name" required="True" />
-                        <field
-            name="ip_address"
-            placeholder="10.144.74.71"
-            required="True"
-          />
-                        <field name="port" required="True" />
-                        <field name="device_password" password="True" />
-                        <field name="sequence" />
-                        <field name="state" required="True" />
-                        <field name="tz" />
-                    </group>
-                    <footer>
-                        <button
-            class="oe_highlight"
-            name="test_connection"
-            string="Test connection"
-            type="object"
-          />
-                    </footer>
-
-                    <div
-          class="alert alert-success alert-dismissible"
-          role="alert"
-          invisible="not context.get('show_message1',
-                    False)"
-        >
-                        <a
-            href="#"
-            class="close"
-            data-dismiss="alert"
-            aria-label="close"
-          >X</a>
-                        <strong>Success!</strong> Device Connected Successfully
-                    </div>
-
+                <form string="Attendance Clock">
+                    <sheet>
+                        <widget
+                            name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"
+                        />
+                        <group>
+                            <group>
+                                <field name="name" required="True" />
+                                <field
+                                    name="ip_address"
+                                    placeholder="10.144.74.71"
+                                    required="True"
+                                />
+                                <field name="port" />
+                                <field name="device_password" password="True" />
+                                <field name="sequence" />
+                                <field name="active" widget="boolean_toggle" />
+                                <field name="tz" />
+                            </group>
+                            <group>
+                                <field name="device_name" />
+                                <field name="device_serial" />
+                                <field name="device_platform" />
+                                <field name="device_firmware" />
+                                <field name="device_fp_version" />
+                                <field name="device_mac" />
+                            </group>
+                        </group>
+                        <footer>
+                            <button
+                                class="oe_highlight"
+                                name="test_connection"
+                                string="Test connection"
+                                type="object"
+                            />
+                        </footer>
+                    </sheet>
                 </form>
             </field>
         </record>
 
         <record id="devices_actions" model="ir.actions.act_window">
-            <field name="name"> Fingerprint Devices</field>
-            <field name="res_model">devices</field>
+            <field name="name">Attendance Clocks</field>
+            <field name="res_model">hr.attendance.clock</field>
             <field name="view_mode">tree,form</field>
-            <field name="help">This view shows fingerprint devices</field>
+            <field name="help">This view shows attendance clock devices</field>
         </record>
 
         <menuitem
-    id="devices_menu_item"
-    name="Devices"
-    action="devices_actions"
-    parent="devices_sub_menu"
-    sequence="1"
-  />
+            id="devices_menu_item"
+            name="Clocks"
+            action="devices_actions"
+            parent="devices_sub_menu"
+            sequence="1"
+        />
 
 </odoo>

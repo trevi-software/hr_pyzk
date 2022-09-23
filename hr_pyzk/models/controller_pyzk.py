@@ -6,8 +6,6 @@ class DeviceUsers:
     def get_users(devices):
         all_users = []
         all_users.clear()
-        # device_object = self.env['devices']
-        # devices = device_object.search([('state', '=', 0)])
         for device in devices:
             with ConnectToDevice(
                 device.ip_address, device.port, device.device_password
@@ -75,11 +73,7 @@ class ConnectToDevice(object):
 
         try:
             zk = ZK(
-                ip_address,
-                port,
-                timeout=10,
-                password=device_password,
-                ommit_ping=True
+                ip_address, port, timeout=10, password=device_password, ommit_ping=True
             )
             conn = zk.connect()
 
@@ -100,3 +94,21 @@ class ConnectToDevice(object):
         enable device and close connection
         """
         self.conn.enable_device()  # noqa: W0104
+
+    def get_device_name(self):
+        return self.conn.get_device_name()
+
+    def get_serial(self):
+        return self.conn.get_serialnumber()
+
+    def get_firmware(self):
+        return self.conn.get_firmware_version()
+
+    def get_platform(self):
+        return self.conn.get_platform()
+
+    def get_fp_version(self):
+        return self.conn.get_fp_version()
+
+    def get_mac(self):
+        return self.conn.get_mac()

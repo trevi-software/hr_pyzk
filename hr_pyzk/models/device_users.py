@@ -1,7 +1,7 @@
 from odoo import _, exceptions, fields, models
 from zk import const
 
-from ..controllers import controller as c
+from . import controller_pyzk as c
 
 
 class DeviceUsers(models.Model):
@@ -14,7 +14,7 @@ class DeviceUsers(models.Model):
     )  # uid in the device. Important to delete user in the future
     name = fields.Char("Device User Name")
     employee_id = fields.Many2one("hr.employee", "Related employee")
-    device_id = fields.Many2one("devices", "Fingerprint Device")
+    device_id = fields.Many2one("hr.attendance.clock", "Clock Device")
 
     _sql_constraints = [
         (
@@ -104,9 +104,7 @@ class DeviceUsers(models.Model):
                 }
 
             except Exception:
-                raise exceptions.Warning(
-                    _("User does not exist in the device")
-                )
+                raise exceptions.Warning(_("User does not exist in the device"))
             # else:
             #     return {
             #         "type": "ir.actions.act_window",

@@ -4,15 +4,15 @@
 
 from odoo import _, exceptions, fields, models
 
-from ..controllers import controller as c
+from ..models import controller_pyzk as c
 
 
 class DeleteAttendanceWizard(models.TransientModel):
     _name = "delete.attendance.wizard"
 
     device_id = fields.Many2one(
-        "devices",
-        "Fingerprint Device",
+        "hr.attendance.clock",
+        "Clock Device",
     )
 
     def delete_attendance(self):

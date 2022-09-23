@@ -24,4 +24,4 @@ class DeviceAttendances(models.Model):
         selection=[("0", "Not Logged"), ("1", "Logged")], string="Status", default="0"
     )
     # validity = fields.Selection([(0, 'Valid'), (1, 'Invalid')], string='Validity', default=0)
-    device_id = fields.Many2one("devices", "fingerprint Device")
+    device_id = fields.Many2one("hr.attendance.clock", "Attendance Device")

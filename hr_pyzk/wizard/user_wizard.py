@@ -2,21 +2,20 @@
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
 
-import datetime
 
 # from datetime import datetime
 from odoo import models
 from pytz import timezone, utc
 
-from ..controllers import controller as c
+from ..models import controller_pyzk as c
 
 
 class UserWizard(models.TransientModel):
     _name = "user.wizard"
 
     def import_users(self):  # Import User for fur Import user Wizard
-        device_object = self.env["devices"]
-        devices = device_object.search([("state", "=", 0)])
+        device_object = self.env["hr.attendance.clock"]
+        devices = device_object.search([])
         users_object = self.env["device.users"]
         odoo_users = users_object.search([])
         odoo_users_id = [user.device_user_id for user in odoo_users]
@@ -40,8 +39,8 @@ class UserWizard(models.TransientModel):
         device_user_object = self.env["device.users"]
         device_users = device_user_object.search([])
         attendance_object = self.env["device.attendances"]
-        devices_object = self.env["devices"]
-        devices = devices_object.search([("state", "=", 0)])
+        devices_object = self.env["hr.attendance.clock"]
+        devices = devices_object.search([])
         for device in devices:
             device_tz = timezone(device.tz)
             attendances = c.DeviceUsers.get_attendance(device)
@@ -107,10 +106,7 @@ class UserWizard(models.TransientModel):
             device_attendances = []
             device_attendances.clear()
             device_attendances = device_attendances_object.search(
-                [
-                    ("device_user_id", "=", user.id),
-                    ("attendance_state", "=", "0")
-                ]
+                [("device_user_id", "=", user.id), ("attendance_state", "=", "0")]
             )
 
             if len(device_attendances) != 0:
