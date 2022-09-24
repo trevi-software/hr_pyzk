@@ -1,5 +1,9 @@
 <odoo>
     <record id="device_manager" model="res.groups">
-        <field name="name">Device / Manager</field>
-    </record>
+        <field name="name">Clock Device / Manager</field>
+        <field
+            name="users"
+            eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"
+        />
+</record>
 </odoo>
