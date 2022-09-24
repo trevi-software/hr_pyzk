@@ -90,8 +90,7 @@ class ConnectToDevice(object):
         self.conn = conn
 
     def __del__(self):
-        if self.conn is not None:
-            self.conn.enable_device()
+        self._enable_and_disconnect()
 
     def __enter__(self):
         """
@@ -103,8 +102,13 @@ class ConnectToDevice(object):
         """
         enable device and close connection
         """
-        self.conn.enable_device()  # noqa: W0104
-        self.conn = None
+        self._enable_and_disconnect()
+
+    def _enable_and_disconnect(self):
+        if self.conn:
+            self.conn.enable_device()
+            self.conn.disconnect()
+            self.conn = None
 
     def get_device_name(self):
         return self.conn.get_device_name()
