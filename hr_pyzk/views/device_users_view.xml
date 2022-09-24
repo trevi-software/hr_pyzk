@@ -82,6 +82,7 @@
     />
     <menuitem
         id="users_sub_menu"
+        action="device_users_action"
         name="Device Users"
         parent="root_menu"
         sequence="10"
@@ -94,16 +95,9 @@
     />
     <menuitem
         id="wizards_sub_menu"
-        name="Wizards"
+        name="Operations"
         parent="root_menu"
         sequence="30"
-    />
-    <menuitem
-        id="user_menu_item"
-        name="Users"
-        action="device_users_action"
-        parent="users_sub_menu"
-        sequence="1"
     />
 
 </odoo>
