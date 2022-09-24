@@ -1,3 +1,4 @@
+from genericpath import exists
 from odoo import exceptions
 from zk import ZK
 
@@ -69,11 +70,16 @@ class ConnectToDevice(object):
     It is using to disable the device when it is been reading or busy
     """
 
-    def __init__(self, ip_address, port, device_password):
+    def __init__(self, ip_address, port, device_password, timeout=10):
 
+        self.conn = None
         try:
             zk = ZK(
-                ip_address, port, timeout=10, password=device_password, ommit_ping=True
+                ip_address,
+                port,
+                timeout=timeout,
+                password=device_password,
+                ommit_ping=True
             )
             conn = zk.connect()
 
@@ -82,6 +88,10 @@ class ConnectToDevice(object):
 
         conn.disable_device()
         self.conn = conn
+
+    def __del__(self):
+        if self.conn is not None:
+            self.conn.enable_device()
 
     def __enter__(self):
         """
@@ -94,6 +104,7 @@ class ConnectToDevice(object):
         enable device and close connection
         """
         self.conn.enable_device()  # noqa: W0104
+        self.conn = None
 
     def get_device_name(self):
         return self.conn.get_device_name()
@@ -112,3 +123,9 @@ class ConnectToDevice(object):
 
     def get_mac(self):
         return self.conn.get_mac()
+
+    def get_time(self):
+        return self.conn.get_time()
+
+    def set_time(self, dt):
+        return self.conn.set_time(dt)
