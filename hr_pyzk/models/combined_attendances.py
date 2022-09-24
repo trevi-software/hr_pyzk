@@ -42,5 +42,5 @@ class CombinedAttendances(models.Model):
             ("transferred", "Transferred"),
         ],
         string="Status",
-        default="not_ransferred",
+        default="not_transferred",
     )

@@ -42,9 +42,9 @@ class Devices(models.Model):
         ) as conn:
             if conn:
                 self.device_name = conn.get_device_name()
-                self.device_serial = conn.get_serial()
+                self.device_serial = conn.get_serialnumber()
                 self.device_platform = conn.get_platform()
-                self.device_firmware = conn.get_firmware()
+                self.device_firmware = conn.get_firmware_version()
                 self.device_fp_version = conn.get_fp_version()
                 self.device_mac = conn.get_mac()
                 return {
