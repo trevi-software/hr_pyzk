@@ -54,6 +54,7 @@
                                 <field name="device_firmware" />
                                 <field name="device_fp_version" />
                                 <field name="device_mac" />
+                                <field name="device_datetime" />
                             </group>
                         </group>
                         <footer>
@@ -62,6 +63,13 @@
                                 name="test_connection"
                                 string="Test connection"
                                 type="object"
+                            />
+                            <button
+                                attr="{'inivisible': [('device_name', '=', False)]}"
+                                name="sync_time"
+                                string="Sync Date/Time"
+                                type="object"
+                                confirm="Are you sure you want to sync the device date/time?"
                             />
                         </footer>
                     </sheet>
