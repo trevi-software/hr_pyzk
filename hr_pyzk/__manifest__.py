@@ -18,7 +18,7 @@
         "views/device_users_view.xml",
         "views/devices_view.xml",
         "views/device_attendances_view.xml",
-        "views/combined_attendances_view.xml",
+        "views/hr_attendance_view.xml",
         "wizard/user_wizard.xml",
         "wizard/delete_attendance_wizard_view.xml",
         "security/pyzk_security.xml",

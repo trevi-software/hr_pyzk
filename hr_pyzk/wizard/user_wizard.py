@@ -40,7 +40,7 @@ class UserWizard(models.TransientModel):
         all_clocks.clear()
         device_user_object = self.env["hr.attendance.clock.user"]
         device_users = device_user_object.search([])
-        attendance_object = self.env["device.attendances"]
+        attendance_object = self.env["hr.attendance.clock.punch"]
         devices_object = self.env["hr.attendance.clock"]
         devices = devices_object.search([])
         for device in devices:
@@ -78,11 +78,11 @@ class UserWizard(models.TransientModel):
             attendance_object.create(
                 {
                     "device_user_id": int(a[0]),
-                    "device_datetime": device_tz.localize(a[1], is_dst=False)
-                    .astimezone(utc)
-                    .replace(tzinfo=None),
+                    "device_datetime":
+                    device_tz.localize(a[1], is_dst=False)
+                        .astimezone(utc)
+                        .replace(tzinfo=None),
                     "device_punch": str(a[2]),
-                    # 'repeat': a[4],
                     "attendance_state": "0",
                     "device_id": a[3],
                 }
@@ -90,25 +90,24 @@ class UserWizard(models.TransientModel):
 
     def employee_attendance(self):  # combining employee attendances
         device_user_object = self.env["hr.attendance.clock.user"]
-        device_attendances_object = self.env["device.attendances"]
+        device_attendances_object = self.env["hr.attendance.clock.punch"]
         odoo_users = device_user_object.search([])
 
         user_punches2 = []
         user_punches2.clear()
         all_attendance = []
         all_attendance.clear()
-        user_clocks = []
-        user_clocks.clear()
         attendance = []
         attendance.clear()
-        # clock = []
-        # clock.clear()
 
         for user in odoo_users:
             device_attendances = []
             device_attendances.clear()
             device_attendances = device_attendances_object.search(
-                [("device_user_id", "=", user.id), ("attendance_state", "=", "0")]
+                [
+                    ("device_user_id", "=", user.id),
+                    ("attendance_state", "=", "0"),
+                ]
             )
 
             if len(device_attendances) != 0:
@@ -124,7 +123,6 @@ class UserWizard(models.TransientModel):
                 attendance = c.DeviceUsers.outputresult(user_punches)
                 user_punches2.extend(user_punches)
                 all_attendance.extend(attendance)
-                # user_clocks.extend(clock)
 
                 for record in device_attendances:
                     if record.attendance_state == "0":
@@ -132,34 +130,25 @@ class UserWizard(models.TransientModel):
         return all_attendance
 
     def combine_attendance(self):
-        combined_attendances_object = self.env["combined.attendances"]
+        hr_attendance_object = self.env["hr.attendance"]
         valid_attendances = []
         valid_attendances.clear()
         valid_attendances = self.employee_attendance()
+        punch_obj = self.env["hr.attendance.clock.punch"]
         for attendance in valid_attendances:
-            combined_attendances_object.create(
-                {
-                    "device_user_id": int(attendance[0]),
-                    "device_date": attendance[1].date(),
-                    "device_clockin": attendance[1],
-                    "device_clockout": attendance[2],
-                }
+            punch_ids = punch_obj.search(
+                [
+                    ("device_user_id", "=", attendance[0]),
+                    "|",
+                    ("device_datetime", "=", attendance[1]),
+                    ("device_datetime", "=", attendance[2]),
+                ]
             )
-
-    def transfer_attendance(self):
-        combined_attendance_object = self.env["combined.attendances"]
-        hr_attendance_object = self.env["hr.attendance"]
-        all_data = combined_attendance_object.search(
-            [("state", "=", "not_transferred"), ("employee_id", "!=", False)]
-        )
-
-        for attendance in all_data:
             hr_attendance_object.create(
                 {
-                    "employee_id": attendance.employee_id.id,
-                    "check_in": attendance.device_clockin,
-                    "check_out": attendance.device_clockout,
+                    "employee_id": punch_ids[0].employee_id.id,
+                    "clock_punch_ids": [(4, p.id) for p in punch_ids],
+                    "check_in": attendance[1],
+                    "check_out": attendance[2],
                 }
             )
-
-            attendance.state = "transferred"

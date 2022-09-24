@@ -24,14 +24,7 @@
                     <button
             name="combine_attendance"
             type="object"
-            string="Combine Attendances"
-            class="oe_highlight"
-          />
-                    ==>
-                    <button
-            name="transfer_attendance"
-            type="object"
-            string="Transfer Attendances"
+            string="Create Attendances"
             class="oe_highlight"
           />
                     ==>
