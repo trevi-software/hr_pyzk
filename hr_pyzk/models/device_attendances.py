@@ -12,7 +12,7 @@ class DeviceAttendances(models.Model):
             if dev.device_user_id.employee_id:
                 dev.employee_id = dev.device_user_id.employee_id
 
-    device_user_id = fields.Many2one("device.users", "Device ID")
+    device_user_id = fields.Many2one("hr.attendance.clock.user", "Device ID")
     employee_id = fields.Many2one(
         "hr.employee", "Related employee", compute=_compute_get_employee_id, store=True
     )

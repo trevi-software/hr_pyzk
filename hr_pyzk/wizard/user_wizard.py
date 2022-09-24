@@ -16,27 +16,29 @@ class UserWizard(models.TransientModel):
     def import_users(self):  # Import User for fur Import user Wizard
         device_object = self.env["hr.attendance.clock"]
         devices = device_object.search([])
-        users_object = self.env["device.users"]
+        users_object = self.env["hr.attendance.clock.user"]
         odoo_users = users_object.search([])
         odoo_users_id = [user.device_user_id for user in odoo_users]
-        unique_data = c.DeviceUsers.get_users(devices)
 
-        for user in unique_data:
-            if int(user.user_id) not in odoo_users_id:
-                users_object.create(
-                    {
-                        "device_user_id": int(user.user_id),
-                        "device_uid": user.uid,
-                        "name": user.name,
-                    }
-                )
+        for dev in devices:
+            unique_data = c.DeviceUsers.get_users(dev)
+            for user in unique_data:
+                if int(user.user_id) not in odoo_users_id:
+                    users_object.create(
+                        {
+                            "device_user_id": int(user.user_id),
+                            "device_uid": user.uid,
+                            "name": user.name,
+                            "device_id": dev.id,
+                        }
+                    )
 
     def import_attendance(self):  # Import Attendance Wizard
         all_attendances = []
         all_attendances.clear()
         all_clocks = []
         all_clocks.clear()
-        device_user_object = self.env["device.users"]
+        device_user_object = self.env["hr.attendance.clock.user"]
         device_users = device_user_object.search([])
         attendance_object = self.env["device.attendances"]
         devices_object = self.env["hr.attendance.clock"]
@@ -87,7 +89,7 @@ class UserWizard(models.TransientModel):
             )
 
     def employee_attendance(self):  # combining employee attendances
-        device_user_object = self.env["device.users"]
+        device_user_object = self.env["hr.attendance.clock.user"]
         device_attendances_object = self.env["device.attendances"]
         odoo_users = device_user_object.search([])
 

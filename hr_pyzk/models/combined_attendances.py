@@ -25,7 +25,7 @@ class CombinedAttendances(models.Model):
             if dev.device_user_id.employee_id:
                 dev.employee_id = dev.device_user_id.employee_id
 
-    device_user_id = fields.Many2one("device.users", "Device User ID")
+    device_user_id = fields.Many2one("hr.attendance.clock.user", "Device User ID")
     employee_id = fields.Many2one(
         "hr.employee",
         "Related employee",
