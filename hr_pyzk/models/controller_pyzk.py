@@ -73,6 +73,10 @@ class ConnectToDevice(object):
     def __init__(self, ip_address, port, device_password, timeout=10):
 
         self.conn = None
+        self.users = 0
+        self.fingers = 0
+        self.users_cap = 0
+        self.fingers_cap = 0
         try:
             zk = ZK(
                 ip_address,
@@ -88,6 +92,13 @@ class ConnectToDevice(object):
 
         conn.disable_device()
         self.conn = conn
+        conn.read_sizes()
+        self.users = conn.users
+        self.fingers = conn.fingers
+        self.users_cap = conn.users_cap
+        self.fingers_cap = conn.fingers_cap
+        self.records = conn.records
+        self.rec_cap = conn.rec_cap
 
     def __del__(self):
         self._enable_and_disconnect()

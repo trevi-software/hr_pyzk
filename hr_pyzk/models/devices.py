@@ -34,11 +34,31 @@ class Devices(models.Model):
     device_serial = fields.Char(string="Serial no.", readonly=True)
     device_platform = fields.Char(readonly=True)
     device_firmware = fields.Char(string="Firmware ver.", readonly=True)
-    device_fp_version = fields.Char(string="Fingerprint Algorithm ver.", readonly=True)
+    device_fp_version = fields.Char(
+        string="Fingerprint Algorithm ver.", readonly=True
+    )
     device_mac = fields.Char(string="Hardware Address", readonly=True)
     device_datetime = fields.Datetime(
         compute="_compute_device_datetime", string="Device Time", readonly=True
     )
+    device_users = fields.Integer(
+        compute="_compute_device_users",
+        string="Users",
+        readonly=True
+    )
+    device_fingers = fields.Integer(
+        compute="_compute_device_users",
+        string="Fingerprints",
+        readonly=True
+    )
+    device_records = fields.Integer(
+        compute="_compute_device_users",
+        string="Records",
+        readonly=True
+    )
+    device_max_users = fields.Integer(string="Max Users", readonly=True)
+    device_max_fingers = fields.Integer(string="Max Fingerprints", readonly=True)
+    device_max_records = fields.Integer(string="Max Records", readonly=True)
 
     def _compute_device_datetime(self):
         for dev in self:
@@ -55,6 +75,18 @@ class Devices(models.Model):
                 .astimezone(utc)                   \
                 .replace(tzinfo=None)
 
+    def _compute_device_users(self):
+        for dev in self:
+            try:
+                conn = c.ConnectToDevice(
+                    dev.ip_address, dev.port, dev.device_password, timeout=1
+                )
+            except Exception:
+                continue
+            dev.device_users = conn.users
+            dev.device_fingers = conn.fingers
+            dev.device_records = conn.records
+
     def test_connection(self):
         with c.ConnectToDevice(
             self.ip_address, self.port, self.device_password
@@ -67,6 +99,12 @@ class Devices(models.Model):
                 self.device_fp_version = conn.get_fp_version()
                 self.device_mac = conn.get_mac()
                 self.device_datetime = conn.get_time()
+                self.device_users = conn.users
+                self.device_max_users = conn.users_cap
+                self.device_fingers = conn.fingers
+                self.device_max_fingers = conn.fingers_cap
+                self.device_records = conn.records
+                self.device_max_records = conn.rec_cap
                 return {
                     "effect": {
                         "fadeout": "slow",

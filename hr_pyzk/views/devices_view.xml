@@ -55,6 +55,42 @@
                                 <field name="device_fp_version" />
                                 <field name="device_mac" />
                                 <field name="device_datetime" />
+                                <label for="device_users" string="Users (Used/Max)" />
+                                <div>
+                                    <field
+                                        name="device_users"
+                                        class="oe_inline"
+                                    />
+                                    /
+                                    <field
+                                        name="device_max_users"
+                                        class="oe_inline"
+                                    />
+                                </div>
+                                <label for="device_fingers" string="Fingerprints (Used/Max)" />
+                                <div>
+                                    <field
+                                        name="device_fingers"
+                                        class="oe_inline"
+                                    />
+                                    /
+                                    <field
+                                        name="device_max_fingers"
+                                        class="oe_inline"
+                                    />
+                                </div>
+                                <label for="device_records" string="Records (Used/Max)" />
+                                <div>
+                                    <field
+                                        name="device_records"
+                                        class="oe_inline"
+                                    />
+                                    /
+                                    <field
+                                        name="device_max_records"
+                                        class="oe_inline"
+                                    />
+                                </div>
                             </group>
                         </group>
                         <footer>
