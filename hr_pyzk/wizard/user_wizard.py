@@ -2,6 +2,8 @@
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
 
+import logging
+logger = logging.getLogger(__name__)
 
 # from datetime import datetime
 from odoo import models
@@ -14,24 +16,32 @@ class UserWizard(models.TransientModel):
     _name = "user.wizard"
 
     def import_users(self):  # Import User for fur Import user Wizard
-        device_object = self.env["hr.attendance.clock"]
-        devices = device_object.search([])
+        devices = self.env["hr.attendance.clock"].search([])
         users_object = self.env["hr.attendance.clock.user"]
+        tobj = self.env["hr.attendance.clock.user.template"]
         odoo_users = users_object.search([])
         odoo_users_id = [user.device_user_id for user in odoo_users]
 
         for dev in devices:
-            unique_data = c.DeviceUsers.get_users(dev)
-            for user in unique_data:
-                if int(user.user_id) not in odoo_users_id:
-                    users_object.create(
-                        {
-                            "device_user_id": int(user.user_id),
-                            "device_uid": user.uid,
-                            "name": user.name,
-                            "device_id": dev.id,
-                        }
-                    )
+            with c.ConnectToDevice(
+                dev.ip_address, dev.port, dev.device_password
+            ) as connection:
+                unique_data, templates = connection.get_users(with_templates=True)
+                for user in unique_data:
+                    if int(user.user_id) not in odoo_users_id:
+                        dev_user = users_object.create({
+                                "device_user_id": int(user.user_id),
+                                "device_uid": user.uid,
+                                "name": user.name,
+                                "device_id": dev.id,
+                        })
+                        for i in range(len(templates[user.uid]["templates"])):
+                            if templates[user.uid]["templates"][i] is not False:
+                                tobj.create({
+                                    "device_user_id": dev_user.id,
+                                    "sequence": i,
+                                    "template": templates[user.uid]["templates"][i]
+                                })
 
     def import_attendance(self):  # Import Attendance Wizard
         all_attendances = []

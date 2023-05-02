@@ -1,4 +1,8 @@
-from datetime import datetime, tzinfo
+# Copyright (C) 2022,2023 TREVI Software
+# Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
+# License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
+from datetime import datetime
 from odoo import api, fields, models
 from pytz import common_timezones, timezone, utc
 
@@ -110,6 +114,7 @@ class Devices(models.Model):
                         "fadeout": "slow",
                         "message": "The device connected successfuly.",
                         "type": "rainbow_man",
+
                     }
                 }
 
@@ -125,3 +130,48 @@ class Devices(models.Model):
                         .astimezone(timezone(dev.tz))   \
                         .replace(tzinfo=None)
                     conn.set_time(dt)
+
+    def sync_users(self, user_ids, update_templates=False):
+
+        # If not in Odoo import from device
+        # If on device update from odoo
+        # If not on device add to device
+        DeviceUsers = self.env["hr.attendance.clock.user"]
+        odoo_users = DeviceUsers.search(
+            [
+                ("device_user_id", "in", user_ids),
+            ]
+        )
+        odoo_user_ids = odoo_users.mapped("device_user_id")
+        new_users = self.env["hr.attendance.clock.user"]
+        update_users = self.env["hr.attendance.clock.user"]
+        remove_users = self.env["hr.attendance.clock.user"]
+
+        for dev in self:
+            unique_data = c.DeviceUsers.get_users(dev)
+            for user in unique_data:
+
+                # Not in Odoo, import from device
+                if int(user.user_id) not in odoo_user_ids:
+                    res = DeviceUsers.create({
+                            "device_user_id": int(user.user_id),
+                            "device_uid": user.uid,
+                            "name": user.name,
+                            "device_id": dev.id,
+                    })
+                    if len(user["templates"]) > 0:
+                        tobj = self.env["hr.attendance.clock.user.template"]
+                        for i in range(len(user["templates"])):
+                            if user["templates"][i] is not False:
+                                tobj.create({
+                                    "device_user_id": res.id,
+                                    "sequence": i,
+                                    "template": user["templates"][i]
+                                })
+                    new_users |= res
+
+        return {
+            "new_users": len(new_users),
+            "updated_on_device": len(update_users),
+            "removed_from_device": len(remove_users),
+        }

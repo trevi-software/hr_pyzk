@@ -1,5 +1,9 @@
+# Copyright (C) 2022,2023 TREVI Software
+# Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
+# License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class DeviceAttendances(models.Model):
@@ -7,17 +11,10 @@ class DeviceAttendances(models.Model):
     _description = "Clock Device Punch"
     _order = "device_datetime desc"
 
-    @api.depends("device_id")
-    def _compute_get_employee_id(self):
-        for dev in self:
-            if dev.device_user_id.employee_id:
-                dev.employee_id = dev.device_user_id.employee_id
-
     device_user_id = fields.Many2one("hr.attendance.clock.user", "Device User ID")
     employee_id = fields.Many2one(
         "hr.employee",
-        "Related employee",
-        compute=_compute_get_employee_id,
+        related="device_user_id.employee_id",
         store=True
     )
     device_datetime = fields.Datetime(string="Device Datetime")
@@ -57,3 +54,43 @@ class DeviceAttendances(models.Model):
                 _("Punches that have already been recorded may not be deleted.")
             )
         return super().unlink()
+
+    def create_complete_attendance(self):
+        hr_attendance = self.env["hr.attendance"]
+        if len(self) != 2:
+            raise ValidationError(
+                _("Internal error. Expected only two punches")
+            )
+        if self[0].attendance_id:
+            self.update_attendance_check_out()
+            return
+
+        assert self[0].employee_id == self[1].employee_id
+        attendance_record = {
+            "employee_id": self[0].employee_id.id,
+            "check_in": self[0].device_datetime,
+            "check_out": self[1].device_datetime,
+        }
+        res = hr_attendance.create(attendance_record)
+        self.mark_device_attendance_converted(res)
+
+    def create_check_in_attendance(self):
+        self.ensure_one()
+        hr_attendance = self.env["hr.attendance"]
+        attendance_record = {
+            "employee_id": self.employee_id.id,
+            "check_in": self.device_datetime,
+        }
+        res = hr_attendance.create(attendance_record)
+        self.mark_device_attendance_converted(res)
+
+    def update_attendance_check_out(self):
+        hr_attendance = self[0].attendance_id
+        if hr_attendance:
+            hr_attendance.check_out = self[1].device_datetime
+        self[1].mark_device_attendance_converted(hr_attendance)
+
+    def mark_device_attendance_converted(self, hr_attendance):
+        self.write(
+            {"attendance_id": hr_attendance.id, "attendance_state": "1"}
+        )

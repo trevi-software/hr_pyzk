@@ -21,6 +21,7 @@
         "views/hr_attendance_view.xml",
         "wizard/user_wizard.xml",
         "wizard/delete_attendance_wizard_view.xml",
+        # "wizard/device_operations.xml",
         "security/pyzk_security.xml",
         "security/ir.model.access.csv",
     ],

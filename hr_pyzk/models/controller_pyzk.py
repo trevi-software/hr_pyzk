@@ -1,10 +1,23 @@
-from genericpath import exists
+# Copyright (C) 2022,2023 TREVI Software
+# Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
+# License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
 from odoo import exceptions
 from zk import ZK
 
 
+# Constants
+USER_DEFAULT = 0
+USER_ENROLLER = 2
+USER_MANAGER = 6
+USER_ADMIN = 14
+
+import logging
+logger = logging.getLogger(__name__)
+
+
 class DeviceUsers:
-    def get_users(devices):
+    def get_users(self, devices):
         all_users = []
         all_users.clear()
         for device in devices:
@@ -107,7 +120,7 @@ class ConnectToDevice(object):
         """
         return biometric connection
         """
-        return self.conn
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
@@ -124,10 +137,10 @@ class ConnectToDevice(object):
     def get_device_name(self):
         return self.conn.get_device_name()
 
-    def get_serial(self):
+    def get_serialnumber(self):
         return self.conn.get_serialnumber()
 
-    def get_firmware(self):
+    def get_firmware_version(self):
         return self.conn.get_firmware_version()
 
     def get_platform(self):
@@ -144,3 +157,33 @@ class ConnectToDevice(object):
 
     def set_time(self, dt):
         return self.conn.set_time(dt)
+
+    def get_users(self, with_templates=False):
+        u_dict = {}
+        users = self.conn.get_users()
+        for u in users:
+            templates = [
+                False, False, False, False, False,
+                False, False, False, False, False
+            ]
+            if with_templates:
+                for i in range(10):
+                    _tpl = self.conn.get_user_template(
+                        u.uid, i
+                    )
+                    if _tpl is not None and _tpl.valid:
+                        templates[i] = _tpl.template
+            u_dict.update(
+                {
+                    u.uid: {
+                        "uid": u.uid,
+                        "user_id": u.user_id,
+                        "name": u.name,
+                        "templates": templates,
+                    }
+                }
+            )
+        return users, u_dict
+
+    def get_attendance(self):
+        return self.conn.get_attendance()

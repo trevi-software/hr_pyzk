@@ -1,4 +1,30 @@
 <odoo>
+
+    <record id="device_users_search_view" model="ir.ui.view">
+        <field name="name">device_users_search_view</field>
+        <field name="model">hr.attendance.clock.user</field>
+        <field name="arch" type="xml">
+            <search string="Search Clock Users">
+                <field name="name" />
+                <field name="employee_id" />
+                <field name="device_user_id" />
+                <filter
+                    string="Not Linked to Employee"
+                    name="no_employee_id"
+                    domain="[('employee_id', '=', False)]"
+                />
+                <separator />
+                <group expand="0" string="Group By">
+                    <filter
+                        string="Privilege"
+                        name="groupby_privilege"
+                        context="{'group_by':'privilege_ids'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="device_users_tree_view" model="ir.ui.view">
         <field name="name">device_users_tree_view</field>
         <field name="model">hr.attendance.clock.user</field>
@@ -8,6 +34,7 @@
                 <field name="device_uid" />
                 <field name="name" />
                 <field name="employee_id" />
+                <field name="template_ids_count" />
                 <field name="device_ids" widget="many2many_tags" />
             </tree>
         </field>
@@ -21,14 +48,19 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="employee_id" />
+                            <field name="name" />
                             <field name="device_user_id" />
                             <field name="device_uid" />
-                            <field name="name" />
-                            <field name="employee_id" />
                             <field name="device_id" />
                         </group>
                         <group>
+                            <field name="template_ids_count" />
                             <field name="device_ids" widget="many2many_tags" />
+                            <div>
+                                <label for="privilege_ids" />
+                                <field name="privilege_ids" nolabel="1" />
+                            </div>
                         </group>
                     </group>
                     <footer>
@@ -51,18 +83,6 @@
         </field>
     </record>
 
-    <record id="device_users_search_view" model="ir.ui.view">
-        <field name="name">device_users_search_view</field>
-        <field name="model">hr.attendance.clock.user</field>
-        <field name="arch" type="xml">
-            <search string="Device users Search View">
-                <field name="device_user_id" />
-                <field name="employee_id" />
-                <field name="name" />
-            </search>
-        </field>
-    </record>
-
     <record id="device_users_action" model="ir.actions.act_window">
         <field name="name">Clock Device Users</field>
         <field name="res_model">hr.attendance.clock.user</field>
@@ -73,13 +93,15 @@
         to import users here Or create users manually here and export them to the device</field>
     </record>
 
+    <record id="action_create_attendance" model="ir.actions.server">
+        <field name="name">Create Attendance Records</field>
+        <field name="model_id" ref="hr_pyzk.model_hr_attendance_clock_user" />
+        <field name="binding_model_id" ref="hr_pyzk.model_hr_attendance_clock_user" />
+        <field name="state">code</field>
+        <field name="code">action = records.create_hr_attendance()</field>
+    </record>
+
     <menuitem id="root_menu" name="Device Attendance" sequence="10" web_icon="hr_pyzk,static/description/icon.png"/>
-    <menuitem
-        id="attendance_sub_menu"
-        name="Attendance"
-        parent="root_menu"
-        sequence="1"
-    />
     <menuitem
         id="users_sub_menu"
         action="device_users_action"
