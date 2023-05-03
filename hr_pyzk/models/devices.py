@@ -2,11 +2,14 @@
 # Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
 # License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import logging
 from datetime import datetime
 from odoo import api, fields, models
 from pytz import common_timezones, timezone, utc
 
 from . import controller_pyzk as c
+
+logger = logging.getLogger(__name__)
 
 
 class Devices(models.Model):
@@ -85,11 +88,15 @@ class Devices(models.Model):
                 conn = c.ConnectToDevice(
                     dev.ip_address, dev.port, dev.device_password, timeout=1
                 )
-            except Exception:
-                continue
-            dev.device_users = conn.users
-            dev.device_fingers = conn.fingers
-            dev.device_records = conn.records
+            except Exception as ex:
+                logger.error(f"unable to connect to clock device '{dev}: {ex}")
+                dev.device_users = 0
+                dev.device_fingers = 0
+                dev.device_records = 0
+            else:
+                dev.device_users = conn.users
+                dev.device_fingers = conn.fingers
+                dev.device_records = conn.records
 
     def test_connection(self):
         with c.ConnectToDevice(

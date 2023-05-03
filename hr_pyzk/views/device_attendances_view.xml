@@ -5,14 +5,16 @@
         <field name="name">device_attendances_tree_view</field>
         <field name="model">hr.attendance.clock.punch</field>
         <field name="arch" type="xml">
-            <tree string="Device Attendances">
-            <field name="device_user_id" />
-            <field name="employee_id" />
-            <field name="device_punch" />
-            <field name="device_datetime" />
-            <field name="device_id" />
-            <field name="attendance_state" />
-            <field name="attendance_id" />
+            <tree string="Device Attendances" decoration-danger="error_state == 'ex'" decoration-muted="attendance_state == '1'">
+                <field name="device_user_id" />
+                <field name="employee_id" />
+                <field name="device_punch" />
+                <field name="device_datetime" />
+                <field name="device_id" />
+                <field name="attendance_state" />
+                <field name="attendance_id" />
+                <field name="attendance_state" />
+                <field name="error_state" />
             <field name="active" />
             </tree>
         </field>
@@ -23,25 +25,28 @@
         <field name="model">hr.attendance.clock.punch</field>
         <field name="arch" type="xml">
             <form string="Device Attendances">
+                <header>
+                    <field name="attendance_state" widget="statusbar" statusbar_visible="0,1" />
+                </header>
                 <sheet>
-                <widget
-                    name="web_ribbon"
-                    title="Archived"
-                    bg_color="bg-danger"
-                    attrs="{'invisible': [('active', '=', True)]}"
-                />
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
                     <group>
                         <group>
-                        <field name="device_user_id" />
-                        <field name="employee_id" />
-                        <field name="device_datetime" />
-                        <field name="device_punch" />
-                        <field name="attendance_state" />
-                        <field name="device_id" />
+                            <field name="device_user_id" />
+                            <field name="employee_id" />
+                            <field name="device_datetime" />
+                            <field name="device_punch" />
+                            <field name="device_id" />
                         </group>
                         <group>
-                        <field name="attendance_id" />
-                        <field name="active" />
+                            <field name="attendance_id" readonly="1" />
+                            <field name="error_state" />
+                            <field name="active" />
                         </group>
                     </group>
                 </sheet>

@@ -184,26 +184,33 @@ class DeviceUsers(models.Model):
             device_punches = clock_punches.search(
                 [
                     ("device_user_id", "=", user.id),
-                    ("attendance_state", "=", "0"),
+                    ("attendance_id", "=", False),
                 ]
             )
             lst = []
             device_punches = device_punches.sorted("device_datetime")
             logger.error(f"   device punches: {len(device_punches)}")
             similar_punches = user.get_previous_punch_record()
+            logger.warning(f"previous punch: {similar_punches[0].device_datetime}")
             _first_run = True
+            logger.warning(f"similar punches: {similar_punches}")                    
             for punch in device_punches:
                 delta = max_delta
                 if len(similar_punches) > 0:
                     delta = punch.device_datetime - similar_punches[-1].device_datetime
+                    logger.warning(f"{punch.device_datetime} - {similar_punches[-1]} = {delta}")
+                logger.warning(f"delta: {delta}")
                 if len(similar_punches) == 0 or delta < max_delta:
+                    logger.warning(f"continue similar_punches: {punch.device_datetime}")
                     similar_punches |= punch
                     continue
                 elif delta > max_delta:
                     if _first_run is False:
+                        logger.warning(f"end similar_punches: {similar_punches[-1].device_datetime}")
                         lst.append(similar_punches)
                     else:  # _first_run is True
                         _first_run = False
+                    logger.warning(f"start similar_punches: {punch.device_datetime}")
                     similar_punches = punch
 
             # There may be a left-over device punch that has a missing counter-part
@@ -235,7 +242,10 @@ class DeviceUsers(models.Model):
 
         self.ensure_one()
         return self.env["hr.attendance.clock.punch"].search(
-            [("device_user_id", "=", self.id)],
+            [
+                ("device_user_id", "=", self.id),
+                ("attendance_id", "!=", False),
+            ],
             order="device_datetime desc",
             limit=1,
         )

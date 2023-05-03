@@ -2,8 +2,12 @@
 # Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
 # License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import logging
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 class DeviceAttendances(models.Model):
@@ -30,13 +34,24 @@ class DeviceAttendances(models.Model):
         string="Device Punch"
     )
     attendance_state = fields.Selection(
-        selection=[("0", "Not Recorded"), ("1", "Recorded")],
-        string="Status",
-        default="0"
+        selection=[("0", "New"), ("1", "Recorded")],
+        compute="_compute_attendance_state",
+        store=False
     )
     device_id = fields.Many2one("hr.attendance.clock", "Attendance Device")
     active = fields.Boolean(default=True)
-    attendance_id = fields.Many2one("hr.attendance", readonly=True)
+    attendance_id = fields.Many2one("hr.attendance", ondelete='set null')
+    error_state = fields.Selection(
+        selection=[("ok", "Ok"), ("ex", "Exception")]
+    )
+
+    @api.depends("attendance_id")
+    def _compute_attendance_state(self):
+        for punch in self:
+            if punch.attendance_id:
+                punch.attendance_state = "1"
+            else:
+                punch.attendance_state = "0"
 
     def name_get(self):
         res = []
@@ -71,8 +86,12 @@ class DeviceAttendances(models.Model):
             "check_in": self[0].device_datetime,
             "check_out": self[1].device_datetime,
         }
-        res = hr_attendance.create(attendance_record)
-        self.mark_device_attendance_converted(res)
+        try:
+            res = hr_attendance.create(attendance_record)
+        except Exception as ex:
+            logger.error(f"unable to create full attendance: {ex}")
+        else:
+            self.mark_device_attendance_converted(res)
 
     def create_check_in_attendance(self):
         self.ensure_one()
@@ -81,16 +100,29 @@ class DeviceAttendances(models.Model):
             "employee_id": self.employee_id.id,
             "check_in": self.device_datetime,
         }
-        res = hr_attendance.create(attendance_record)
-        self.mark_device_attendance_converted(res)
+        try:
+            res = hr_attendance.create(attendance_record)
+        except Exception as ex:
+            logger.error(f"unable to create check-in attendance: {ex}")
+            self.error_state = "ex"
+        else:
+            self.mark_device_attendance_converted(res)
 
     def update_attendance_check_out(self):
-        hr_attendance = self[0].attendance_id
+        hr_attendance = self.attendance_id
         if hr_attendance:
-            hr_attendance.check_out = self[1].device_datetime
-        self[1].mark_device_attendance_converted(hr_attendance)
+            try:
+                hr_attendance.check_out = self[1].device_datetime
+            except Exception as ex:
+                logger.error(f"unable to update attendance: {ex}")
+                self.error_state = "ex"
+            else:
+                self[1].mark_device_attendance_converted(hr_attendance)
 
     def mark_device_attendance_converted(self, hr_attendance):
         self.write(
-            {"attendance_id": hr_attendance.id, "attendance_state": "1"}
+            {
+                "attendance_id": hr_attendance.id,
+                "error_state": "ok",
+            }
         )
