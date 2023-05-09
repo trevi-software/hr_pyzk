@@ -4,6 +4,7 @@
 from datetime import datetime
 from psycopg2.errors import NotNullViolation
 
+from odoo.exceptions import UserError
 from odoo.tests import Form
 
 from .test_common import TestClockCommon
@@ -90,3 +91,21 @@ class TestClockPunch(TestClockCommon):
         )
         self.assertFalse(punch.error_state, "The Punch's error state is cleared")
         self.assertFalse(punch.attendance_id, "Punch attendance_id is set to NULL")
+
+    def test_unlink_after_attendance_created(self):
+        clock = self.new_clock("A", "10.0.0.1")
+        ee, clock_user = self.new_employee_with_clock_user("Bob")
+        punch = self.ClockPunch.create({
+            "device_id": clock.id,
+            "device_user_id": clock_user.id,
+            "device_datetime": datetime.now(),
+            "device_punch": "0",
+        })
+        punch.create_check_in_attendance()
+        self.assertEqual(
+            punch.attendance_state, "1", "Punch has been recorded"
+        )
+        self.assertTrue(punch.attendance_id, "Punch has an hr.attendance record")
+
+        with self.assertRaises(UserError):
+            punch.unlink()

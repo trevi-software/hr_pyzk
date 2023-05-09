@@ -195,15 +195,12 @@ class DeviceUsers(models.Model):
             lst = []
             device_punches = device_punches.sorted("device_datetime")
             similar_punches = user.get_previous_punch_record()
-            logger.warning(f"similar_punches: {similar_punches}")
             _first_run = True
             for punch in device_punches:
-                logger.warning(f"punch: {punch.device_datetime}")
                 delta = max_delta
                 if len(similar_punches) > 0:
                     delta = \
                         punch.device_datetime - similar_punches[-1].device_datetime
-                    logger.warning(f"delta: {delta}")
                 if len(similar_punches) == 0 or delta < max_delta:
                     similar_punches |= punch
                     if _first_run is True:
@@ -225,12 +222,10 @@ class DeviceUsers(models.Model):
             # Create attendance records
             for grouped_punches in lst:
                 if len(grouped_punches) == 1:
-                    logger.warning(f"checkin: {grouped_punches[0].device_datetime}")
                     grouped_punches.create_check_in_attendance()
                     continue
                 _check_in = True
                 single_attendance = self.env["hr.attendance.clock.punch"]
-                logger.warning(f"from: {grouped_punches[0].device_datetime} - {grouped_punches[1].device_datetime}")
                 for punch in grouped_punches:
                     if _check_in:
                         single_attendance |= punch
