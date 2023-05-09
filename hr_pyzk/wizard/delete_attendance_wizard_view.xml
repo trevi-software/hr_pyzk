@@ -36,12 +36,12 @@
           <field name="view_id" ref="delete_attendance_wizard" />
         </record>
 
-        <menuitem
-    id="delete_attendance_wizard_menu_item"
-    name="Delete Attendance Wizard"
-    action="delete_attendance_wizard_action"
-    parent="wizards_sub_menu"
-    sequence="2"
-  />
+    <menuitem
+        id="delete_attendance_wizard_menu_item"
+        name="Delete Attendance Wizard"
+        action="delete_attendance_wizard_action"
+        parent="menu_operations"
+        sequence="2"
+    />
 
 </odoo>

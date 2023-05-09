@@ -26,7 +26,7 @@ class Devices(models.Model):
         return res
 
     name = fields.Char(required=True)
-    ip_address = fields.Char()
+    ip_address = fields.Char(required=True)
     port = fields.Integer(default=4370)
     sequence = fields.Integer()
     device_password = fields.Char()
@@ -37,6 +37,7 @@ class Devices(models.Model):
         string="Timezone",
         help="Timezone of attendance records read from the device.",
     )
+    for_enrollment = fields.Boolean()
     device_name = fields.Char(readonly=True)
     device_serial = fields.Char(string="Serial no.", readonly=True)
     device_platform = fields.Char(readonly=True)
@@ -66,6 +67,8 @@ class Devices(models.Model):
     device_max_users = fields.Integer(string="Max Users", readonly=True)
     device_max_fingers = fields.Integer(string="Max Fingerprints", readonly=True)
     device_max_records = fields.Integer(string="Max Records", readonly=True)
+    for_enrollment = fields.Boolean(help="The device is used for enrollment employees")
+    for_attendance = fields.Boolean(help="The device is used for recording attendance")
 
     def _compute_device_datetime(self):
         for dev in self:

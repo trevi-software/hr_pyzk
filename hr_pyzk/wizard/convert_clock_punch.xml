@@ -1,0 +1,42 @@
+<odoo>
+    <record id="convert_punch_wizard" model="ir.ui.view">
+        <field name="name">wizard.convert.clock.punch.form</field>
+        <field name="model">wizard.convert.clock.punch</field>
+        <field name="arch" type="xml">
+            <form string="Convert Clock Punches to Attendance">
+                <group name="punches" string="Clock Punches">
+                    <field name="clock_punch_ids" nolabel="1" />
+                </group>
+                <footer>
+                    <button
+                        name="convert_to_attendance"
+                        type="object"
+                        string="Create Attendances"
+                        class="oe_highlight"
+                    />
+                    <button
+                        special="cancel"
+                        string="Cancel"
+                        class="oe_highlight"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="convert_punch_wizard_action" model="ir.actions.act_window">
+        <field name="name" >Create Attendance Records</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wizard.convert.clock.punch</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="convert_punch_wizard" />
+    </record>
+
+    <menuitem
+        id="user_wizard_menu_item"
+        action="convert_punch_wizard_action"
+        parent="menu_operations"
+        sequence="40"
+    />
+</odoo>

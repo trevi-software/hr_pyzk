@@ -1,5 +1,35 @@
 <odoo>
-        <!--Views -->
+
+    <record id="devices_search_view" model="ir.ui.view">
+        <field name="name">device_search_view</field>
+        <field name="model">hr.attendance.clock</field>
+        <field name="arch" type="xml">
+            <search string="Search Clocks">
+                <field name="name" />
+                <field name="ip_address" />
+                <field name="device_serial" />
+                <field name="device_mac" />
+                <filter
+                    string="Attendance Clocks"
+                    name="for_attendance"
+                    domain="[('for_attendance', '=', True)]"
+                />
+                <filter
+                    string="Enrollment Clocks"
+                    name="for_enrollment"
+                    domain="[('for_enrollment', '=', True)]"
+                />
+                <separator />
+                <group expand="0" string="Group By">
+                    <filter
+                        string="Device Platform"
+                        name="groupby_platform"
+                        context="{'group_by':'device_platform'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
 
         <record id="devices_tree_view" model="ir.ui.view">
             <field name="name">Attendance Clock List View</field>
@@ -9,6 +39,8 @@
                     <field name="name" />
                     <field name="ip_address" />
                     <field name="port" />
+                    <field name="for_enrollment" widget="boolean_toggle" />
+                    <field name="for_attendance" widget="boolean_toggle" />
                     <field name="sequence" />
                     <field name="active" widget="boolean_toggle" />
                     <field name="device_name" />
@@ -43,9 +75,11 @@
                                 />
                                 <field name="port" />
                                 <field name="device_password" password="True" />
+                                <field name="tz" />
+                                <field name="for_enrollment" widget="boolean_toggle" />
+                                <field name="for_attendance" widget="boolean_toggle" />
                                 <field name="sequence" />
                                 <field name="active" widget="boolean_toggle" />
-                                <field name="tz" />
                             </group>
                             <group>
                                 <field name="device_name" />
@@ -124,8 +158,8 @@
             id="devices_menu_item"
             name="Clocks"
             action="devices_actions"
-            parent="devices_sub_menu"
-            sequence="1"
+            parent="root_menu"
+            sequence="20"
         />
 
 </odoo>

@@ -6,7 +6,6 @@ from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
-from zk import const
 
 from . import controller_pyzk as c
 import logging
@@ -23,7 +22,9 @@ class DeviceUsers(models.Model):
     device_uid = fields.Integer(string="Device UID", readonly=True)
     name = fields.Char("Device User Name", required=True)
     employee_id = fields.Many2one(
-        "hr.employee", "Related employee", ondelete="restrict"
+        comodel_name="hr.employee",
+        string="Related employee",
+        ondelete="restrict",
     )
     device_id = fields.Many2one(
         comodel_name="hr.attendance.clock",
@@ -51,6 +52,7 @@ class DeviceUsers(models.Model):
             ("device", "Imported"),
             ("odoo", "Linked")
         ],
+        default="device",
         help="""
         The device user can be in one of two states:
         Imported - Imported from a clock device but not yet linked to an Employee
@@ -175,12 +177,15 @@ class DeviceUsers(models.Model):
                         type="danger",
                     )
 
+    def action_create_hr_attendance(self):
+        self.create_hr_attendance()
+
+        return self.env.ref("hr_pyzk.device_attendances_action").read()[0]
+
     def create_hr_attendance(self):
-        logger.error("in create_hr_attendance()")
         max_delta = timedelta(hours=14)
         clock_punches = self.env["hr.attendance.clock.punch"]
         for user in self:
-            logger.error("   iterate over self")
             device_punches = clock_punches.search(
                 [
                     ("device_user_id", "=", user.id),
@@ -189,43 +194,43 @@ class DeviceUsers(models.Model):
             )
             lst = []
             device_punches = device_punches.sorted("device_datetime")
-            logger.error(f"   device punches: {len(device_punches)}")
             similar_punches = user.get_previous_punch_record()
-            logger.warning(f"previous punch: {similar_punches[0].device_datetime}")
+            logger.warning(f"similar_punches: {similar_punches}")
             _first_run = True
-            logger.warning(f"similar punches: {similar_punches}")                    
             for punch in device_punches:
+                logger.warning(f"punch: {punch.device_datetime}")
                 delta = max_delta
                 if len(similar_punches) > 0:
-                    delta = punch.device_datetime - similar_punches[-1].device_datetime
-                    logger.warning(f"{punch.device_datetime} - {similar_punches[-1]} = {delta}")
-                logger.warning(f"delta: {delta}")
+                    delta = \
+                        punch.device_datetime - similar_punches[-1].device_datetime
+                    logger.warning(f"delta: {delta}")
                 if len(similar_punches) == 0 or delta < max_delta:
-                    logger.warning(f"continue similar_punches: {punch.device_datetime}")
                     similar_punches |= punch
+                    if _first_run is True:
+                        _first_run = False
                     continue
                 elif delta > max_delta:
                     if _first_run is False:
-                        logger.warning(f"end similar_punches: {similar_punches[-1].device_datetime}")
                         lst.append(similar_punches)
                     else:  # _first_run is True
                         _first_run = False
-                    logger.warning(f"start similar_punches: {punch.device_datetime}")
                     similar_punches = punch
 
             # There may be a left-over device punch that has a missing counter-part
             if len(similar_punches) == 1:
                 lst.append(similar_punches)
             elif len(similar_punches) > 1:
-                raise ValidationError(_("Internal error. Unexpeced device punces."))
+                raise ValidationError(_("Internal error. Unexpeced device punches."))
 
             # Create attendance records
             for grouped_punches in lst:
                 if len(grouped_punches) == 1:
+                    logger.warning(f"checkin: {grouped_punches[0].device_datetime}")
                     grouped_punches.create_check_in_attendance()
                     continue
                 _check_in = True
                 single_attendance = self.env["hr.attendance.clock.punch"]
+                logger.warning(f"from: {grouped_punches[0].device_datetime} - {grouped_punches[1].device_datetime}")
                 for punch in grouped_punches:
                     if _check_in:
                         single_attendance |= punch
@@ -249,6 +254,26 @@ class DeviceUsers(models.Model):
             order="device_datetime desc",
             limit=1,
         )
+
+    def action_create_hr_employee(self):
+        self.create_hr_employee()
+
+        return self.env.ref("hr_pyzk.device_users_action").read()[0]
+
+    def create_hr_employee(self):
+        HrEmployee = self.env["hr.employee"]
+        res = HrEmployee
+        for user in self:
+            if user.employee_id:
+                continue
+            ee = HrEmployee.create({
+                "name": user.name,
+                "clock_user_id": user.id,
+            })
+            user.employee_id = ee
+            res |= ee
+
+        return res
 
     def get_effective_privilege(self, device_id):
         self.ensure_one()

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="root_menu" name="Device Attendance" sequence="10"
+        web_icon="hr_pyzk,static/description/icon.png" />
+
+    <menuitem
+        id="menu_operations"
+        name="Operations"
+        parent="root_menu"
+        sequence="30"
+    />
+
+</odoo>

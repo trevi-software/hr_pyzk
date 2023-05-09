@@ -1,0 +1,46 @@
+<odoo>
+    <record id="wizard_import_clock_user" model="ir.ui.view">
+        <field name="name">wizard.import.clock.user.form</field>
+        <field name="model">wizard.import.clock.user</field>
+        <field name="arch" type="xml">
+            <form string="Import Users">
+                <group>
+                    <group>
+                        <field name="for_enrollment_only" readonly="1" />
+                    </group>
+                </group>
+                <group name="clocks" string="Attendance Clocks">
+                    <field name="clock_ids" nolabel="1" />
+                </group>
+                <footer>
+                    <button
+                        name="import_users"
+                        type="object"
+                        string="Import"
+                        class="oe_highlight"
+                    />
+                    <button
+                        special="cancel"
+                        string="Cancel"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wizard_import_clock_user_action" model="ir.actions.act_window">
+        <field name="name">Import Users</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wizard.import.clock.user</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="wizard_import_clock_user" />
+    </record>
+
+    <menuitem
+        id="wizard_import_clock_user_menu"
+        action="wizard_import_clock_user_action"
+        parent="menu_operations"
+        sequence="20"
+    />
+</odoo>

@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-
+# pylint: disable=pointless-statement
 {
     "name": "ZKTeco Biometric Attendance",
     "version": "14.0.1.0.0",
@@ -15,13 +15,15 @@
         "python": ["pyzk"],
     },
     "data": [
+        "views/hr_pyzk_views.xml",
         "views/device_users_view.xml",
         "views/devices_view.xml",
         "views/device_attendances_view.xml",
         "views/hr_attendance_view.xml",
-        "wizard/user_wizard.xml",
+        "wizard/import_clock_user.xml",
+        "wizard/import_clock_punch.xml",
+        "wizard/convert_clock_punch.xml",
         "wizard/delete_attendance_wizard_view.xml",
-        # "wizard/device_operations.xml",
         "security/pyzk_security.xml",
         "security/ir.model.access.csv",
     ],

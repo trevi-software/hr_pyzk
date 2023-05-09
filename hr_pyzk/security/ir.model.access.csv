@@ -4,5 +4,7 @@ fingerprints,Fingerprints,model_hr_attendance_clock_user_template,device_manager
 privileges,Privileges,model_hr_attendance_clock_user_privilege,device_manager,1,1,1,1
 devices,Devices,model_hr_attendance_clock,device_manager,1,1,1,1
 device_attendances,Device Attendances,model_hr_attendance_clock_punch,device_manager,1,1,1,1
-user_wizard,User Wizard,model_user_wizard,device_manager,1,1,1,1
+user_wizard,User Wizard,model_wizard_import_clock_user,device_manager,1,1,1,1
+clock_punch_wizard,Clock Punch Wizard,model_wizard_import_clock_punch,device_manager,1,1,1,1
+convert_clock_punch_wizard,Convert Clock Punch Wizard,model_wizard_convert_clock_punch,device_manager,1,1,1,1
 deleta_attendance_wizard,Delete Attendance Wizard,model_delete_attendance_wizard,device_manager,1,1,1,1

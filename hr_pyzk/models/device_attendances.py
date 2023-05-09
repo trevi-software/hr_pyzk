@@ -15,13 +15,12 @@ class DeviceAttendances(models.Model):
     _description = "Clock Device Punch"
     _order = "device_datetime desc"
 
-    device_user_id = fields.Many2one("hr.attendance.clock.user", "Device User ID")
+    device_user_id = fields.Many2one("hr.attendance.clock.user", required=True)
     employee_id = fields.Many2one(
-        "hr.employee",
         related="device_user_id.employee_id",
         store=True
     )
-    device_datetime = fields.Datetime(string="Device Datetime")
+    device_datetime = fields.Datetime(required=True)
     device_punch = fields.Selection(
         [
             ("0", "Check In"),
@@ -31,14 +30,19 @@ class DeviceAttendances(models.Model):
             ("4", "OT In"),
             ("5", "OT Out"),
         ],
-        string="Device Punch"
+        string="Device Punch",
+        required=True,
     )
     attendance_state = fields.Selection(
         selection=[("0", "New"), ("1", "Recorded")],
         compute="_compute_attendance_state",
         store=False
     )
-    device_id = fields.Many2one("hr.attendance.clock", "Attendance Device")
+    device_id = fields.Many2one(
+        comodel_name="hr.attendance.clock",
+        string="Attendance Device",
+        required=True,
+    )
     active = fields.Boolean(default=True)
     attendance_id = fields.Many2one("hr.attendance", ondelete='set null')
     error_state = fields.Selection(
@@ -51,7 +55,10 @@ class DeviceAttendances(models.Model):
             if punch.attendance_id:
                 punch.attendance_state = "1"
             else:
-                punch.attendance_state = "0"
+                punch.write({
+                    "attendance_state": "0",
+                    "error_state": False,
+                })
 
     def name_get(self):
         res = []
