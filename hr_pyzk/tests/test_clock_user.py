@@ -15,6 +15,12 @@ class TestClockUser(TestClockCommon):
                 "state": "odoo",
             })
 
+    def test_required_uid_sequence(self):
+        self.fail()
+
+    def test_required_device_user_id_sequence(self):
+        self.fail()
+
     def test_defaults(self):
 
         user = self.ClockUser.create({"name": "Bob"})
@@ -34,7 +40,17 @@ class TestClockUser(TestClockCommon):
         users |= self.new_clock_user("Bob")
         employees = users.create_hr_employee()
 
+        rec1_uid = users[0].device_uid
+        rec1_user_id = users[0].device_user_id
+        rec2_uid = users[1].device_uid
+        rec2_user_id = users[1].device_user_id
         self.assertEqual(len(employees), 2, "Two hr.employee records were created")
+        self.assertTrue(rec1_uid > 0, "Clock user uid is a positive number")
+        self.assertTrue(rec1_user_id > 0, "Clock user user_id is a positive number")
+        self.assertTrue(rec2_uid > 0, "Clock user uid is a positive number")
+        self.assertTrue(rec2_user_id > 0, "Clock user user_id is a positive number")
+        self.assertTrue(rec2_uid > rec1_uid, "Second user uid is > first user uid")
+        self.assertTrue(rec2_user_id > rec1_user_id, "Second user uid is > first user uid")
         self.assertEqual(
             employees[0].name,
             "Alice",
@@ -78,3 +94,6 @@ class TestClockUser(TestClockCommon):
             user.employee_id.id,
             original_ee_id,
             "The Clock User is still linked to the employee")
+
+    def test_update_name_from_employee(self):
+        self.fail()

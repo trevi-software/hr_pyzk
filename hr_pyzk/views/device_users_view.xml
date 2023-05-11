@@ -46,10 +46,13 @@
         <field name="arch" type="xml">
             <form string="Device Users Form view">
                 <sheet>
+                    <label for="name" class="oe_edit_only" />
+                    <h1>
+                        <field name="name" />
+                    </h1>
                     <group>
                         <group>
                             <field name="employee_id" />
-                            <field name="name" />
                             <field name="device_user_id" />
                             <field name="device_uid" />
                             <field name="device_id" />
@@ -57,10 +60,14 @@
                         <group>
                             <field name="template_ids_count" />
                             <field name="device_ids" widget="many2many_tags" />
-                            <div>
+                        </group>
+                        <group>
+                            <group>
                                 <label for="privilege_ids" />
-                                <field name="privilege_ids" nolabel="1" />
-                            </div>
+                                <div>
+                                    <field name="privilege_ids" nolabel="1" />
+                                </div>
+                            </group>
                         </group>
                     </group>
                     <footer>
@@ -116,5 +123,73 @@
         parent="root_menu"
         sequence="10"
     />
+
+    <record id="device_users_manage_form_view" model="ir.ui.view">
+        <field name="name">hr.attendance.clock.user.manage.form</field>
+        <field name="model">hr.attendance.clock.user</field>
+        <field name="arch" type="xml">
+            <form string="Manage Clock Device User">
+                <h1>
+                    <field name="name" nolabel="1" readonly="1" />
+                </h1>
+                <group>
+                    <group>
+                        <field name="employee_id" />
+                        <field name="device_user_id" readonly="1" />
+                        <field name="device_uid" readonly="1" />
+                        <field name="device_id" />
+                    </group>
+                    <group>
+                        <field name="template_ids_count" />
+                        <field name="device_ids" widget="many2many_tags" />
+                    </group>
+                    <group>
+                        <group>
+                            <label for="privilege_ids" />
+                            <div>
+                                <field name="privilege_ids" nolabel="1" />
+                            </div>
+                        </group>
+                    </group>
+                </group>
+                <footer>
+                    <button
+                        name="register_to_enrollment_device"
+                        type="object"
+                        string="Register/Update"
+                        class="oe_highlight"
+                    />
+                    <button
+                        name="enroll_user"
+                        type="object"
+                        string="Enroll Fingerprints"
+                        class="oe_highlight"
+                        style="margin-left:10px;"
+                    />
+                    <button
+                        name="upload_to_clock"
+                        type="object"
+                        string="Upload to Attendance"
+                        class="oe_highlight"
+                        style="margin-left:10px;"
+                    />
+                    <button
+                        special="cancel"
+                        string="Close"
+                        style="margin-left:10px;"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wizard_manage_clock_user_action" model="ir.actions.act_window">
+        <field name="name">Manage Clock User</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.attendance.clock.user</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="device_users_manage_form_view" />
+    </record>
 
 </odoo>

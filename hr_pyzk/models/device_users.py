@@ -17,9 +17,19 @@ class DeviceUsers(models.Model):
     _description = "Attendance Clock User"
     _order = "device_user_id"
 
-    device_user_id = fields.Integer(string="Device User ID", readonly=False)
+    device_user_id = fields.Integer(
+        string="Device User ID",
+        required=True,
+        readonly=False,
+        default=0,
+    )
     # uid in the device. Important to delete user in the future
-    device_uid = fields.Integer(string="Device UID", readonly=True)
+    device_uid = fields.Integer(
+        string="Device UID",
+        required=True,
+        readonly=True,
+        default=0,
+    )
     name = fields.Char("Device User Name", required=True)
     employee_id = fields.Many2one(
         comodel_name="hr.employee",
@@ -103,6 +113,31 @@ class DeviceUsers(models.Model):
                 }
         }
         return notification
+
+    def register_to_enrollment_device(self):
+        pass
+
+    def enroll_user(self):
+        for dev in self.device_id:
+            with c.ConnectToDevice(
+                dev.ip_address, dev.port, dev.device_password
+            ) as connection:
+                res = connection.enroll_user(str(self.device_uid), str(0), str(self.device_user_id))
+                if res is True:
+                    return self._do_notify(
+                        "Success",
+                        "The finger has been enrolled on the device.",
+                        type="success",
+                    )
+                else:
+                    return self._do_notify(
+                        "Error",
+                        "Finger enrollment has failed.",
+                        type="danger",
+                    )
+
+    def upload_to_clock(self):
+        pass
 
     def create_user(self):
         """
@@ -288,3 +323,19 @@ class DeviceUsers(models.Model):
         elif privilege == "admin":
             res = c.USER_ADMIN
         return res
+
+    @api.model_create_multi
+    def create(self, lst):
+        for vals in lst:
+            if vals.get("device_uid", 0) == 0:
+                vals["device_uid"] = int(
+                    self.env["ir.sequence"].next_by_code(
+                        "hr.attendance.clock.user.uid.ref")
+                )
+            if vals.get("device_user_id", 0) == 0:
+                vals["device_user_id"] = int(
+                    self.env["ir.sequence"].next_by_code(
+                        "hr.attendance.clock.user.device_user_id.ref")
+                )
+
+        return super().create(lst)

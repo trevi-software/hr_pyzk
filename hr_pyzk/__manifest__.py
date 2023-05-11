@@ -15,11 +15,13 @@
         "python": ["pyzk"],
     },
     "data": [
+        "data/sequence.xml",
         "views/hr_pyzk_views.xml",
         "views/device_users_view.xml",
         "views/devices_view.xml",
         "views/device_attendances_view.xml",
         "views/hr_attendance_view.xml",
+        "views/hr_employee_view.xml",
         "wizard/import_clock_user.xml",
         "wizard/import_clock_punch.xml",
         "wizard/convert_clock_punch.xml",

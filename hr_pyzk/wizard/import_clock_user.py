@@ -14,7 +14,7 @@ class ImportClockUser(models.TransientModel):
     _name = "wizard.import.clock.user"
     _description = "Wizard to import attendance clock users"
 
-    for_enrollment_only = fields.Boolean(default=True)
+    use_enrollment_clocks = fields.Boolean(default=True)
     clock_ids = fields.Many2many(
         comodel_name="hr.attendance.clock",
         string="Clocks",

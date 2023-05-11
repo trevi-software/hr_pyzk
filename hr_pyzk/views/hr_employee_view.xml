@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="act_hr_employee_2_hr_attendance_clock_user" model="ir.actions.act_window">
+        <field name="res_model">hr.attendance.clock.user</field>
+        <field name="name">Clock</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="hr_pyzk.device_users_manage_form_view" />
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <record id="hr_employee_view_form" model="ir.ui.view">
+        <field name="name">hr.employee.view.inherit.pyzk</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form" />
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button
+                        name="open_clock_user_form"
+                        class="oe_stat_button"
+                        icon="fa-hand-pointer-o"
+                        type="object"
+                        context="{'search_default_current_policies': 1}"
+                        groups="hr_pyzk.device_manager"
+                    >
+                        <field
+                            name="clock_template_count"
+                            widget="statinfo"
+                            string="Clock"
+                        />
+                    </button>
+                </xpath>
+            </data>
+        </field>
+    </record>
+
+</odoo>

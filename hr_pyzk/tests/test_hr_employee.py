@@ -49,3 +49,6 @@ class TestHrEmployee(TestClockCommon):
             original_clock_user_id,
             "the call to create a clock user was a NOP"
         )
+
+    def test_fingerprint_count_matches_clock_user(self):
+        self.fail()

@@ -6,7 +6,7 @@
             <form string="Import Users">
                 <group>
                     <group>
-                        <field name="for_enrollment_only" readonly="1" />
+                        <field name="use_enrollment_clocks" readonly="1" />
                     </group>
                 </group>
                 <group name="clocks" string="Attendance Clocks">

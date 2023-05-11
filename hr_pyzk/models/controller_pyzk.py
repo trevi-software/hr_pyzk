@@ -187,3 +187,12 @@ class ConnectToDevice(object):
 
     def get_attendance(self):
         return self.conn.get_attendance()
+
+    def enroll_user(self, uid, template, user_id):
+        res = False
+        try:
+            res = self.conn.enroll_user(uid, temp_id=template, user_id=user_id)
+        except Exception as ex:
+            logger.error(f"enroll finger failed: {ex}")
+
+        return res

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_uid_ref" model="ir.sequence">
+            <field name="name">Attendance Clock uid</field>
+            <field name="code">hr.attendance.clock.user.uid.ref</field>
+            <field name="prefix"></field>
+            <field name="padding">0</field>
+        </record>
+        <record id="seq_device_user_id_ref" model="ir.sequence">
+            <field name="name">Attendance Clock device_user_id</field>
+            <field name="code">hr.attendance.clock.user.device_user_id.ref</field>
+            <field name="prefix"></field>
+            <field name="padding">0</field>
+        </record>
+    </data>
+</odoo>
