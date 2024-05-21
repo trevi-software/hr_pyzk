@@ -20,15 +20,11 @@ class DeviceUsers(models.Model):
     device_user_id = fields.Integer(
         string="Device User ID",
         required=True,
-        readonly=False,
-        default=0,
     )
     # uid in the device. Important to delete user in the future
     device_uid = fields.Integer(
         string="Device UID",
         required=True,
-        readonly=True,
-        default=0,
     )
     name = fields.Char("Device User Name", required=True)
     employee_id = fields.Many2one(
@@ -65,10 +61,11 @@ class DeviceUsers(models.Model):
         default="device",
         help="""
         The device user can be in one of two states:
-        Imported - Imported from a clock device but not yet linked to an Employee
-                   record.
-        Linked - Either the record was created directly from an Odoo employee or
-        it was imported from a device and then linked to an Odoo employee."""
+        Imported - Imported from a clock device but not yet linked to an
+                   Employee record.
+        Linked - Either the record was created directly from an Odoo employee
+                 or it was imported from a device and then linked to an Odoo
+                 employee."""
     )
 
     _sql_constraints = [
@@ -102,7 +99,7 @@ class DeviceUsers(models.Model):
             if not clock_user.device_user_id and clock_user.employee_id:
                 clock_user.device_user_id = clock_user.employee_id.id
 
-    def _do_notify(self, title="", msg="", type="info", sticky=False):
+    def _do_notify(self, title="", msg="", mtype="info", sticky=False):
         notification = {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -122,7 +119,9 @@ class DeviceUsers(models.Model):
             with c.ConnectToDevice(
                 dev.ip_address, dev.port, dev.device_password
             ) as connection:
-                res = connection.enroll_user(str(self.device_uid), str(0), str(self.device_user_id))
+                res = connection.enroll_user(
+                    str(self.device_uid), str(0), str(self.device_user_id)
+                )
                 if res is True:
                     return self._do_notify(
                         "Success",
@@ -229,30 +228,33 @@ class DeviceUsers(models.Model):
             )
             lst = []
             device_punches = device_punches.sorted("device_datetime")
-            similar_punches = user.get_previous_punch_record()
+            prv_punches = user.get_previous_punch_record()
             _first_run = True
             for punch in device_punches:
                 delta = max_delta
-                if len(similar_punches) > 0:
+                if len(prv_punches) > 0:
                     delta = \
-                        punch.device_datetime - similar_punches[-1].device_datetime
-                if len(similar_punches) == 0 or delta < max_delta:
-                    similar_punches |= punch
+                        punch.device_datetime - prv_punches[-1].device_datetime
+                if len(prv_punches) == 0 or delta < max_delta:
+                    prv_punches |= punch
                     if _first_run is True:
                         _first_run = False
                     continue
                 elif delta > max_delta:
                     if _first_run is False:
-                        lst.append(similar_punches)
+                        lst.append(prv_punches)
                     else:  # _first_run is True
                         _first_run = False
-                    similar_punches = punch
+                    prv_punches = punch
 
-            # There may be a left-over device punch that has a missing counter-part
-            if len(similar_punches) == 1:
-                lst.append(similar_punches)
-            elif len(similar_punches) > 1:
-                raise ValidationError(_("Internal error. Unexpeced device punches."))
+            # There may be a left-over device punch that has a missing
+            # counter-part
+            if len(prv_punches) == 1:
+                lst.append(prv_punches)
+            elif len(prv_punches) > 1:
+                raise ValidationError(
+                    _("Internal error. Unexpeced device punches.")
+                )
 
             # Create attendance records
             for grouped_punches in lst:
@@ -269,7 +271,9 @@ class DeviceUsers(models.Model):
                         single_attendance |= punch
                         single_attendance.create_complete_attendance()
                         _check_in = True
-                        single_attendance = self.env["hr.attendance.clock.punch"]
+                        single_attendance = self.env[
+                            "hr.attendance.clock.punch"
+                        ]
                 if len(single_attendance) > 0:
                     single_attendance.create_check_in_attendance()
 

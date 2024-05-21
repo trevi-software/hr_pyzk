@@ -65,10 +65,13 @@ class Devices(models.Model):
         readonly=True
     )
     device_max_users = fields.Integer(string="Max Users", readonly=True)
-    device_max_fingers = fields.Integer(string="Max Fingerprints", readonly=True)
+    device_max_fingers = fields.Integer(string="Max Fingerprints",
+                                        readonly=True)
     device_max_records = fields.Integer(string="Max Records", readonly=True)
-    for_enrollment = fields.Boolean(help="The device is used for enrollment employees")
-    for_attendance = fields.Boolean(help="The device is used for recording attendance")
+    for_enrollment = fields.Boolean(
+        help="The device is used for enrollment employees")
+    for_attendance = fields.Boolean(
+        help="The device is used for recording attendance")
 
     def _compute_device_datetime(self):
         for dev in self:

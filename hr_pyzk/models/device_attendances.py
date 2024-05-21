@@ -73,7 +73,7 @@ class DeviceAttendances(models.Model):
         logged_ids = self.filtered(lambda a: a.attendance_state == "1")
         if logged_ids:
             raise UserError(
-                _("Punches that have already been recorded may not be deleted.")
+                _("Punches that have been recorded may not be deleted.")
             )
         return super().unlink()
 

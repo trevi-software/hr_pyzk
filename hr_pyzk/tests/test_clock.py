@@ -3,8 +3,6 @@
 
 from psycopg2.errors import NotNullViolation
 
-from odoo import api, registry
-
 from .test_common import TestClockCommon
 
 

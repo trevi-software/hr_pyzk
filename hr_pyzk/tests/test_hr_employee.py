@@ -1,8 +1,6 @@
 # Copyright (C) 2023 TREVI Software
 # License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from psycopg2.errors import NotNullViolation
-
 from odoo.exceptions import ValidationError
 
 from .test_common import TestClockCommon
@@ -51,4 +49,5 @@ class TestHrEmployee(TestClockCommon):
         )
 
     def test_fingerprint_count_matches_clock_user(self):
+        ee, clock_user = self.new_employee_with_clock_user("Bob")
         self.fail()

@@ -1,19 +1,18 @@
-# Copyright (C) 2022,2023 TREVI Software
+# Copyright (C) 2022-2024 TREVI Software
 # Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
 # License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import exceptions
 from zk import ZK
 
+import logging
+logger = logging.getLogger(__name__)
 
 # Constants
 USER_DEFAULT = 0
 USER_ENROLLER = 2
 USER_MANAGER = 6
 USER_ADMIN = 14
-
-import logging
-logger = logging.getLogger(__name__)
 
 
 class DeviceUsers:
@@ -47,7 +46,8 @@ class DeviceUsers:
         ) as conn:
             attendances = conn.get_attendance()
             device_attendance = [
-                [x.user_id, x.timestamp, x.punch, device.id] for x in attendances
+                [x.user_id, x.timestamp, x.punch, device.id]
+                for x in attendances
             ]
 
         return device_attendance
@@ -71,7 +71,8 @@ class DeviceUsers:
             del user_clock[-1]
 
         user_attendance = [
-            [i[0], i[1], j[1]] for i, j in zip(user_clock[::2], user_clock[1::2])
+            [i[0], i[1], j[1]]
+            for i, j in zip(user_clock[::2], user_clock[1::2])
         ]
 
         return user_attendance

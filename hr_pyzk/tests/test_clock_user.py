@@ -44,13 +44,13 @@ class TestClockUser(TestClockCommon):
         rec1_user_id = users[0].device_user_id
         rec2_uid = users[1].device_uid
         rec2_user_id = users[1].device_user_id
-        self.assertEqual(len(employees), 2, "Two hr.employee records were created")
+        self.assertEqual(len(employees), 2, "2 employee records were created")
         self.assertTrue(rec1_uid > 0, "Clock user uid is a positive number")
-        self.assertTrue(rec1_user_id > 0, "Clock user user_id is a positive number")
+        self.assertTrue(rec1_user_id > 0, "Clock user_id is a positive number")
         self.assertTrue(rec2_uid > 0, "Clock user uid is a positive number")
-        self.assertTrue(rec2_user_id > 0, "Clock user user_id is a positive number")
-        self.assertTrue(rec2_uid > rec1_uid, "Second user uid is > first user uid")
-        self.assertTrue(rec2_user_id > rec1_user_id, "Second user uid is > first user uid")
+        self.assertTrue(rec2_user_id > 0, "Clock user_id is a positive number")
+        self.assertTrue(rec2_uid > rec1_uid, "Second uid is > first user uid")
+        self.assertTrue(rec2_user_id > rec1_user_id, "Second uid > first uid")
         self.assertEqual(
             employees[0].name,
             "Alice",
@@ -89,7 +89,8 @@ class TestClockUser(TestClockCommon):
         user.create_hr_employee()
 
         ee_count_new = self.HrEmployee.search_count([])
-        self.assertEqual(ee_count_new, ee_count, "Num. of employees remains constant")
+        self.assertEqual(ee_count_new, ee_count,
+                         "Num. of employees remains constant")
         self.assertEqual(
             user.employee_id.id,
             original_ee_id,

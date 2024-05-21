@@ -83,14 +83,17 @@ class TestClockPunch(TestClockCommon):
         self.assertEqual(
             punch.attendance_state, "1", "Punch has been recorded"
         )
-        self.assertTrue(punch.attendance_id, "Punch has an hr.attendance record")
+        self.assertTrue(punch.attendance_id,
+                        "Punch has an hr.attendance record")
 
         punch.attendance_id.unlink()
         self.assertEqual(
             punch.attendance_state, "0", "Punch has NOT been recorded"
         )
-        self.assertFalse(punch.error_state, "The Punch's error state is cleared")
-        self.assertFalse(punch.attendance_id, "Punch attendance_id is set to NULL")
+        self.assertFalse(punch.error_state,
+                         "The Punch's error state is cleared")
+        self.assertFalse(punch.attendance_id,
+                         "Punch attendance_id is set to NULL")
 
     def test_unlink_after_attendance_created(self):
         clock = self.new_clock("A", "10.0.0.1")
@@ -105,7 +108,8 @@ class TestClockPunch(TestClockCommon):
         self.assertEqual(
             punch.attendance_state, "1", "Punch has been recorded"
         )
-        self.assertTrue(punch.attendance_id, "Punch has an hr.attendance record")
+        self.assertTrue(punch.attendance_id,
+                        "Punch has an hr.attendance record")
 
         with self.assertRaises(UserError):
             punch.unlink()
