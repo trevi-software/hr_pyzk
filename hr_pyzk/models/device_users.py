@@ -26,7 +26,7 @@ class DeviceUsers(models.Model):
         string="Device UID",
         required=True,
     )
-    name = fields.Char("Device User Name", required=True)
+    name = fields.Char(string="Device User Name", required=True)
     employee_id = fields.Many2one(
         comodel_name="hr.employee",
         string="Related employee",
