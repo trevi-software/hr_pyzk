@@ -31,7 +31,9 @@ class ImportClockUser(models.TransientModel):
             with c.ConnectToDevice(
                 dev.ip_address, dev.port, dev.device_password
             ) as connection:
-                unique_data, templates = connection.get_users(with_templates=True)
+                unique_data, tpls = connection.get_users(
+                    with_templates=True
+                )
                 for user in unique_data:
                     if int(user.user_id) not in odoo_users_id:
                         dev_user = users_object.create({
@@ -40,12 +42,12 @@ class ImportClockUser(models.TransientModel):
                                 "name": user.name,
                                 "device_id": dev.id,
                         })
-                        for i in range(len(templates[user.uid]["templates"])):
-                            if templates[user.uid]["templates"][i] is not False:
+                        for i in range(len(tpls[user.uid]["templates"])):
+                            if tpls[user.uid]["templates"][i] is not False:
                                 tobj.create({
                                     "device_user_id": dev_user.id,
                                     "sequence": i,
-                                    "template": templates[user.uid]["templates"][i]
+                                    "template": tpls[user.uid]["templates"][i]
                                 })
 
         return self.env.ref("hr_pyzk.device_users_action").read()[0]

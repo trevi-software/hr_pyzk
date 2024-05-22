@@ -2,9 +2,6 @@
 # License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
-from pytz import timezone, utc
-
-from ..models import controller_pyzk as c
 
 import logging
 logger = logging.getLogger(__name__)

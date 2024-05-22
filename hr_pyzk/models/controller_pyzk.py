@@ -33,6 +33,7 @@ class DeviceUsers:
                     if int(user.user_id) not in added:
                         added.append(int(user.user_id))
                         added.sort()
+                        logger.info("user: %s", user)
                         unique_data.append(user)
         return unique_data
 
@@ -185,6 +186,18 @@ class ConnectToDevice(object):
                 }
             )
         return users, u_dict
+
+    def set_user(self,
+                 uid=None,
+                 name='',
+                 privilege=0,
+                 password='',
+                 group_id='',
+                 user_id='',
+                 card=0):
+        self.conn.set_user(
+            uid, name, privilege, password, group_id, user_id, card
+        )
 
     def get_attendance(self):
         return self.conn.get_attendance()

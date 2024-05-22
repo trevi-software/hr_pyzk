@@ -15,12 +15,6 @@ class TestClockUser(TestClockCommon):
                 "state": "odoo",
             })
 
-    def test_required_uid_sequence(self):
-        self.fail()
-
-    def test_required_device_user_id_sequence(self):
-        self.fail()
-
     def test_defaults(self):
 
         user = self.ClockUser.create({"name": "Bob"})

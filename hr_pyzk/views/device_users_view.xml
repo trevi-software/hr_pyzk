@@ -62,12 +62,16 @@
                             <field name="device_ids" widget="many2many_tags" />
                         </group>
                         <group>
-                            <group>
-                                <label for="privilege_ids" />
-                                <div>
-                                    <field name="privilege_ids" nolabel="1" />
-                                </div>
-                            </group>
+                            <label for="privilege_ids" />
+                            <div>
+                                <field name="privilege_ids" nolabel="1" />
+                            </div>
+                        </group>
+                        <group>
+                            <label for="template_ids" />
+                            <div>
+                                <field name="template_ids" nolabel="1" />
+                            </div>
                         </group>
                     </group>
                     <footer>
@@ -144,12 +148,16 @@
                         <field name="device_ids" widget="many2many_tags" />
                     </group>
                     <group>
-                        <group>
-                            <label for="privilege_ids" />
-                            <div>
-                                <field name="privilege_ids" nolabel="1" />
-                            </div>
-                        </group>
+                        <label for="privilege_ids" />
+                        <div>
+                            <field name="privilege_ids" nolabel="1" />
+                        </div>
+                    </group>
+                    <group>
+                        <label for="template_ids" />
+                        <div>
+                            <field name="template_ids" nolabel="1" />
+                        </div>
                     </group>
                 </group>
                 <footer>

@@ -101,11 +101,11 @@ class DeviceAttendances(models.Model):
             self.mark_device_attendance_converted(res)
 
     def create_check_in_attendance(self):
-        self.ensure_one()
+        assert len(self) == 1
         hr_attendance = self.env["hr.attendance"]
         attendance_record = {
-            "employee_id": self.employee_id.id,
-            "check_in": self.device_datetime,
+            "employee_id": self[0].employee_id.id,
+            "check_in": self[0].device_datetime,
         }
         try:
             res = hr_attendance.create(attendance_record)

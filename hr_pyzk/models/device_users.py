@@ -6,7 +6,6 @@ from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
-
 from . import controller_pyzk as c
 import logging
 logger = logging.getLogger(__name__)
@@ -126,13 +125,13 @@ class DeviceUsers(models.Model):
                     return self._do_notify(
                         "Success",
                         "The finger has been enrolled on the device.",
-                        type="success",
+                        mtype="success",
                     )
                 else:
                     return self._do_notify(
                         "Error",
                         "Finger enrollment has failed.",
-                        type="danger",
+                        mtype="danger",
                     )
 
     def upload_to_clock(self):
@@ -162,14 +161,14 @@ class DeviceUsers(models.Model):
                     return self._do_notify(
                         "Success",
                         "The user has been created on the device.",
-                        type="success",
+                        mtype="success",
                     )
                 else:
                     return self._do_notify(
                         "Error",
                         f"The User ID '{self.device_user_id}' is already in "
                         f"use on '{dev.name}'. Please choose another ID.",
-                        type="danger",
+                        mtype="danger",
                     )
 
     def edit_user(self, device_ids=None):
@@ -181,34 +180,34 @@ class DeviceUsers(models.Model):
             device_ids = self.device_ids
         if not device_ids:
             raise UserError(_("Fingerprint device is not selected"))
-
         for dev in device_ids:
             ip_address = dev.ip_address
             port = dev.port
             device_password = dev.device_password
             with c.ConnectToDevice(ip_address, port, device_password) as conn:
 
-                device_users = conn.get_users()
-                device_user_ids = [int(x.user_id) for x in device_users]
+                _u, users = conn.get_users()
+                device_user_ids = [int(x['user_id']) for x in users.values()]
                 if self.device_user_id in device_user_ids:
                     conn.set_user(
                         uid=self.device_uid,
-                        name=self.name,
+                        name=self.employee_id.name,
                         privilege=c.USER_DEFAULT,
                         user_id=str(self.device_user_id),
                     )
+                    self.name = self.employee_id.name
                     return self._do_notify(
                         "Success",
                         f"The record for '{self.name}' has been successfuly "
                         f"updated.",
-                        type="success",
+                        mtype="success",
                     )
                 else:
                     return self._do_notify(
                         "Error",
                         f"The User ID '{self.device_user_id}' does not exist "
                         f"on device '{dev.name}'. ",
-                        type="danger",
+                        mtype="danger",
                     )
 
     def action_create_hr_attendance(self):
@@ -216,7 +215,7 @@ class DeviceUsers(models.Model):
 
         return self.env.ref("hr_pyzk.device_attendances_action").read()[0]
 
-    def create_hr_attendance(self):
+    def create_hr_attendance2(self):
         max_delta = timedelta(hours=14)
         clock_punches = self.env["hr.attendance.clock.punch"]
         for user in self:
@@ -251,10 +250,11 @@ class DeviceUsers(models.Model):
             # counter-part
             if len(prv_punches) == 1:
                 lst.append(prv_punches)
-            elif len(prv_punches) > 1:
-                raise ValidationError(
-                    _("Internal error. Unexpeced device punches.")
-                )
+            # elif len(prv_punches) > 1:
+            #     raise ValidationError(
+            #         _("Internal error. Unexpeced device punches.")
+            #     )
+            logger.info("lst: %s", lst)
 
             # Create attendance records
             for grouped_punches in lst:
@@ -276,6 +276,54 @@ class DeviceUsers(models.Model):
                         ]
                 if len(single_attendance) > 0:
                     single_attendance.create_check_in_attendance()
+
+    def create_hr_attendance(self):
+        max_delta = timedelta(hours=14)
+        clock_punches = self.env["hr.attendance.clock.punch"]
+        for user in self:
+            device_punches = clock_punches.search(
+                [
+                    ("device_user_id", "=", user.id),
+                    ("attendance_id", "=", False),
+                ]
+            )
+            lst = []
+            device_punches = device_punches.sorted("device_datetime")
+            prv_punch = user.get_previous_punch_record()
+            if prv_punch.device_punch not in ["0", "2", "4"]:
+                prv_punch = []
+            for punch in device_punches:
+                delta = max_delta
+                if len(prv_punch) > 0:
+                    delta = punch.device_datetime - \
+                        prv_punch[-1].device_datetime
+                    if delta < max_delta:
+                        lst.append([prv_punch, punch])
+                        prv_punch = []
+                elif len(prv_punch) == 0 or delta >= max_delta:
+                    prv_punch = punch
+
+            # There may be a left-over device punch that has a missing
+            # counter-part
+            if len(prv_punch) == 1:
+                lst.append([prv_punch])
+            elif len(prv_punch) > 1:
+                raise ValidationError(
+                    _("Internal error. Unexpeced device punches.")
+                )
+                # lst.append(device_punches)
+                # logger.info("lst: %s", lst)
+
+            # Create attendance records
+            att_punches = self.env["hr.attendance.clock.punch"]
+            for grouped_punches in lst:
+                for punch in grouped_punches:
+                    att_punches |= punch
+                if len(grouped_punches) == 1:
+                    att_punches.create_check_in_attendance()
+                    continue
+                elif len(grouped_punches) > 1:
+                    att_punches.create_complete_attendance()
 
     def get_previous_punch_record(self):
 
