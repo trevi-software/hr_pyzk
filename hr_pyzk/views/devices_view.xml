@@ -73,7 +73,10 @@
                                     placeholder="10.144.74.71"
                                     required="True"
                                 />
-                                <field name="port" />
+                                <field
+                                    name="port"
+                                    placeholder="4370"
+                                />
                                 <field name="device_password" password="True" />
                                 <field name="tz" />
                                 <field name="for_enrollment" widget="boolean_toggle" />
