@@ -22,7 +22,7 @@
                         icon="fa-hand-pointer-o"
                         type="object"
                         context="{'search_default_current_policies': 1}"
-                        groups="hr_pyzk.device_manager"
+                        groups="device_manager"
                     >
                         <field
                             name="clock_template_count"

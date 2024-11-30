@@ -25,7 +25,7 @@
         "wizard/import_clock_user.xml",
         "wizard/import_clock_punch.xml",
         "wizard/convert_clock_punch.xml",
-        "wizard/delete_attendance_wizard_view.xml",
+        "wizard/delete_attendance_wizard.xml",
         "security/pyzk_security.xml",
         "security/ir.model.access.csv",
     ],
