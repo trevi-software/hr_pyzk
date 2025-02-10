@@ -2,8 +2,8 @@
 # Copyright (C) Sheikh M. Salahuddin <smsalah@gmail.com>
 # License GPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import exceptions
-from zk import ZK
+from odoo import exceptions # type: ignore
+from zk import ZK           # type: ignore
 
 import logging
 logger = logging.getLogger(__name__)
@@ -85,7 +85,7 @@ class ConnectToDevice(object):
     It is using to disable the device when it is been reading or busy
     """
 
-    def __init__(self, ip_address, port, device_password, timeout=10):
+    def __init__(self, ip_address, port, device_password, timeout=30):
 
         self.conn = None
         self.users = 0
